@@ -1,12 +1,5 @@
-# 新零售SaaS赋能店铺
+# SpringBoot（2.0.5）+MybatisPlus（3.0.7）项目骨架
 
-   <div style="width:100%"> 
-   <img src="https://github.com/D2C-Cai/shop/blob/master/doc/1.png" width="280" alt="介绍1.png" style="float:left"/>
-   <img src="https://github.com/D2C-Cai/shop/blob/master/doc/2.png" width="280" alt="介绍2.png" style="float:left"/>
-   <img src="https://github.com/D2C-Cai/shop/blob/master/doc/3.png" width="280" alt="介绍3.png" style="float:left"/>
-   </div>
-   <br>
-      
 　　Mall项目的单个微服务详细案例，详见代码：https://github.com/D2C-Cai/mall  
 　　SpringBoot（2.0.5）+MybatisPlus（3.0.7）项目骨架，支持SpringSecurity+JWT权限验证，整合Redis+MongoDB+RabbitMQ+Elasticseach，Quartz定时任务，EasyPoi的Excel导出，Swagger2接口文档，工具包Lombok/FastJson/Hutool/Jasypt<br>
 　　作者QQ：[709931138]() 作者邮箱：[709931138@qq.com]()
