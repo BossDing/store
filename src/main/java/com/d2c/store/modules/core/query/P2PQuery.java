@@ -9,6 +9,6 @@ import lombok.EqualsAndHashCode;
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class P2pQuery extends BaseQuery {
+public class P2PQuery extends BaseQuery {
 
 }

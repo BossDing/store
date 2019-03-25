@@ -18,7 +18,7 @@ import java.math.BigDecimal;
 @EqualsAndHashCode(callSuper = false)
 @TableName("CORE_P2P")
 @ApiModel(description = "P2P平台表")
-public class P2pDO extends BaseDelDO {
+public class P2PDO extends BaseDelDO {
 
     @Assert(type = AssertEnum.NOT_NULL)
     @ApiModelProperty(value = "名称")
