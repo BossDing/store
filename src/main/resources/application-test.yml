@@ -1,0 +1,76 @@
+server:
+  port: 8001
+  tomcat:
+    uri-encoding: UTF-8
+    max-threads: 1000
+    min-spare-threads: 30
+
+# spring
+spring:
+  datasource:
+    url: jdbc:mysql://192.168.0.146:3306/store?useUnicode=true&characterEncoding=utf-8&useAffectedRows=true&useSSL=false&serverTimezone=Asia/Shanghai
+    username: root
+    password: ENC(vx9OWLu20TlanLx53aj/Qg==)
+    type: com.alibaba.druid.pool.DruidDataSource
+    driverClassName: com.mysql.jdbc.Driver
+
+  redis:
+    host: 192.168.0.146
+    database: 1
+    port: 6379
+    timeout: 3000ms
+
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+    serialization:
+      write-dates-as-timestamps: false
+
+  servlet:
+    multipart:
+      max-file-size: 5Mb
+      max-request-size: 5Mb
+
+# mybatis-plus
+mybatis-plus:
+  mapper-locations: classpath:/mapper/**/*.xml
+  typeAliasesPackage: com.d2c.store.modules.*.model
+  global-config:
+    db-config:
+      id-type: id_worker
+      field-strategy: not_null
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+    sql-parser-cache: false
+  configuration:
+    auto-mapping-behavior: partial
+    map-underscore-to-camel-case: true
+    cache-enabled: false
+#   log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+# ignored-urls
+ignored:
+  urls:
+    - /api/**
+    - /druid/**
+    - /swagger-ui.html
+    - /swagger-resources/**
+    - /swagger/**
+    - /**/v2/api-docs
+    - /**/*.js
+    - /**/*.css
+    - /**/*.png
+    - /**/*.ico
+    - /back/user/expired
+    - /back/user/insert
+
+# store-sdk
+store:
+  sms:
+    dahantc:
+      account: ENC(UX8bZOr3oWSvBczS+9SsRA==)
+      password: ENC(4uCdGxmEQtkdF+Pgl+GVkIE1xpUn36f0)
+
+#logging:
+#  level:
+#    root: debug
