@@ -1,8 +1,10 @@
 package com.d2c.store.modules.member.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.d2c.store.modules.core.model.P2PDO;
 import com.d2c.store.modules.member.model.MemberDO;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 /**
@@ -10,9 +12,9 @@ import java.util.Date;
  */
 public interface MemberService extends IService<MemberDO> {
 
-    MemberDO findByAccount(String account);
+    MemberDO doOauth(String account, BigDecimal amount, String loginIp, P2PDO p2pDO);
 
-    boolean doLogin(String account, String loginIp, String accessToken, Date accessExpired);
+    MemberDO doLogin(MemberDO member, String loginIp, String accessToken, Date accessExpired);
 
     boolean doLogout(String account);
 

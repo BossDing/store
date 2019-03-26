@@ -1,6 +1,9 @@
 package com.d2c.store.modules.member.query;
 
+import com.d2c.store.common.api.annotation.Condition;
 import com.d2c.store.common.api.base.BaseQuery;
+import com.d2c.store.common.api.emuns.ConditionEnum;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -10,5 +13,12 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = false)
 public class AccountQuery extends BaseQuery {
+
+    @Condition(condition = ConditionEnum.EQ)
+    @ApiModelProperty(value = "平台ID")
+    private Long p2pId;
+    @Condition(condition = ConditionEnum.EQ)
+    @ApiModelProperty(value = "会员ID")
+    private Long memberId;
 
 }

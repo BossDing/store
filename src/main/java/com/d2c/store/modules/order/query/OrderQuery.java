@@ -15,19 +15,16 @@ import lombok.EqualsAndHashCode;
 public class OrderQuery extends BaseQuery {
 
     @Condition(condition = ConditionEnum.EQ)
-    @ApiModelProperty(value = "店铺ID")
-    private Long shopId;
+    @ApiModelProperty(value = "会员ID")
+    private Long memberId;
+    @Condition(condition = ConditionEnum.EQ)
+    @ApiModelProperty(value = "订单号")
+    private String sn;
     @Condition(condition = ConditionEnum.EQ)
     @ApiModelProperty(value = "类型")
     private String type;
     @Condition(condition = ConditionEnum.EQ)
     @ApiModelProperty(value = "状态")
     private String status;
-    @Condition(condition = ConditionEnum.EQ)
-    @ApiModelProperty(value = "订单号")
-    private String sn;
-    @Condition(condition = ConditionEnum.EQ)
-    @ApiModelProperty(value = "会员ID")
-    private Long memberId;
 
 }

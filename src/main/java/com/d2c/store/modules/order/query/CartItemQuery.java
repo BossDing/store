@@ -15,8 +15,8 @@ import lombok.EqualsAndHashCode;
 public class CartItemQuery extends BaseQuery {
 
     @Condition(condition = ConditionEnum.EQ)
-    @ApiModelProperty(value = "店铺ID")
-    private Long shopId;
+    @ApiModelProperty(value = "平台ID")
+    private Long p2pId;
     @Condition(condition = ConditionEnum.EQ)
     @ApiModelProperty(value = "会员ID")
     private Long memberId;

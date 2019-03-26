@@ -15,12 +15,6 @@ import lombok.EqualsAndHashCode;
 public class OrderItemQuery extends BaseQuery {
 
     @Condition(condition = ConditionEnum.EQ)
-    @ApiModelProperty(value = "店铺ID")
-    private Long shopId;
-    @Condition(condition = ConditionEnum.EQ)
-    @ApiModelProperty(value = "店铺名")
-    private String shopName;
-    @Condition(condition = ConditionEnum.EQ)
     @ApiModelProperty(value = "会员ID")
     private Long memberId;
     @Condition(condition = ConditionEnum.IN)
@@ -33,16 +27,10 @@ public class OrderItemQuery extends BaseQuery {
     @ApiModelProperty(value = "状态")
     private String status;
     @Condition(condition = ConditionEnum.EQ)
-    @ApiModelProperty(value = "拼团团ID")
-    private Long crowdId;
-    @Condition(condition = ConditionEnum.EQ)
     @ApiModelProperty(value = "商品名称")
     private String productName;
     @Condition(condition = ConditionEnum.EQ)
     @ApiModelProperty(value = "会员账号")
     private String memberAccount;
-    @Condition(condition = ConditionEnum.EQ)
-    @ApiModelProperty(value = "支付方式")
-    private String paymentType;
 
 }

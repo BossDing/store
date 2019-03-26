@@ -59,13 +59,18 @@ public class JWTAuthenticationFilter extends BasicAuthenticationFilter {
                     .setSigningKey(SecurityConstant.JWT_SIGN_KEY)
                     .parseClaimsJws(accessToken.replace(SecurityConstant.TOKEN_PREFIX, ""))
                     .getBody();
+            // 解析得到账号
             String username = claims.getSubject();
+            // 获取登录信息
             UserDO user = SpringUtil.getBean(UserService.class).findByUsername(username);
+            // 登录信息不存在，登录过期
             Asserts.notNull(ResultCode.LOGIN_EXPIRED, user);
+            // Token信息已经变更，登录过期
             BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
             if (!encoder.matches(accessToken, user.getAccessToken())) {
                 throw new ApiException(ResultCode.LOGIN_EXPIRED);
             }
+            // 刷新本地登录信息
             SecurityUserDetails securityUserDetail = new SecurityUserDetails(user);
             User principal = new User(username, "", securityUserDetail.getAuthorities());
             return new UsernamePasswordAuthenticationToken(principal, null, securityUserDetail.getAuthorities());

@@ -21,6 +21,9 @@ import java.math.BigDecimal;
 public class P2PDO extends BaseDelDO {
 
     @Assert(type = AssertEnum.NOT_NULL)
+    @ApiModelProperty(value = "密钥")
+    private String secret;
+    @Assert(type = AssertEnum.NOT_NULL)
     @ApiModelProperty(value = "名称")
     private String name;
     @ApiModelProperty(value = "联系方式")

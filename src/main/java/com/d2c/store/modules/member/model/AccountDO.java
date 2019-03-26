@@ -11,6 +11,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  * @author Cai
@@ -32,5 +33,8 @@ public class AccountDO extends BaseDelDO {
     @Assert(type = AssertEnum.NOT_NULL)
     @ApiModelProperty(value = "授权金额")
     private BigDecimal amount;
+    @Assert(type = AssertEnum.NOT_NULL)
+    @ApiModelProperty(value = "过期时间")
+    private Date deadline;
 
 }

@@ -15,9 +15,6 @@ import lombok.EqualsAndHashCode;
 public class ProductCategoryQuery extends BaseQuery {
 
     @Condition(condition = ConditionEnum.EQ)
-    @ApiModelProperty(value = "店铺ID")
-    private Long shopId;
-    @Condition(condition = ConditionEnum.EQ)
     @ApiModelProperty(value = "父级ID")
     private Long parentId;
 

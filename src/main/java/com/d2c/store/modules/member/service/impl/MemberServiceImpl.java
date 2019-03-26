@@ -1,18 +1,27 @@
 package com.d2c.store.modules.member.service.impl;
 
+import cn.hutool.core.date.DateUtil;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.d2c.store.common.api.base.BaseService;
 import com.d2c.store.common.utils.QueryUtil;
+import com.d2c.store.modules.core.model.P2PDO;
 import com.d2c.store.modules.member.mapper.MemberMapper;
+import com.d2c.store.modules.member.model.AccountDO;
 import com.d2c.store.modules.member.model.MemberDO;
+import com.d2c.store.modules.member.query.AccountQuery;
 import com.d2c.store.modules.member.query.MemberQuery;
+import com.d2c.store.modules.member.service.AccountService;
 import com.d2c.store.modules.member.service.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 /**
@@ -24,28 +33,91 @@ public class MemberServiceImpl extends BaseService<MemberMapper, MemberDO> imple
     @Autowired
     private MemberMapper memberMapper;
     @Autowired
+    private AccountService accountService;
+    @Autowired
     private RedisTemplate redisTemplate;
 
     @Override
+    @Transactional
     @Cacheable(value = "MEMBER", key = "'session:'+#account", unless = "#result == null")
-    public MemberDO findByAccount(String account) {
-        MemberQuery query = new MemberQuery();
-        query.setAccount(account);
-        MemberDO member = this.getOne(QueryUtil.buildWrapper(query));
-        return member;
+    public MemberDO doOauth(String account, BigDecimal amount, String loginIp, P2PDO p2pDO) {
+        MemberQuery mq = new MemberQuery();
+        mq.setAccount(account);
+        MemberDO member = this.getOne(QueryUtil.buildWrapper(mq));
+        if (member != null) {
+            // 原已注册会员
+            AccountQuery aq = new AccountQuery();
+            aq.setMemberId(member.getId());
+            aq.setP2pId(p2pDO.getId());
+            AccountDO accountDO = accountService.getOne(QueryUtil.buildWrapper(aq));
+            if (accountDO != null) {
+                // 覆盖授权额度
+                member.setAccountInfo(this.coverAccount(accountDO, amount, p2pDO.getOauthTime()));
+            } else {
+                // 给予授权额度
+                member.setAccountInfo(this.renderAccount(member.getId(), p2pDO.getId(), amount, p2pDO.getOauthTime()));
+            }
+            return member;
+        } else {
+            // 原未注册会员
+            MemberDO entity = new MemberDO();
+            entity.setAccount(account);
+            entity.setPassword(new BCryptPasswordEncoder().encode(account.substring(account.length() - 6)));
+            entity.setRegisterIp(loginIp);
+            entity.setStatus(1);
+            super.save(entity);
+            // 给予授权额度
+            entity.setAccountInfo(this.renderAccount(entity.getId(), p2pDO.getId(), amount, p2pDO.getOauthTime()));
+            return entity;
+        }
+    }
+
+    // 给予授权额度
+    private AccountDO renderAccount(Long memberId, Long p2pId, BigDecimal amount, Integer hours) {
+        AccountDO entity = new AccountDO();
+        entity.setMemberId(memberId);
+        entity.setP2pId(p2pId);
+        entity.setAmount(amount);
+        entity.setDeadline(DateUtil.offsetHour(new Date(), hours));
+        accountService.save(entity);
+        return entity;
+    }
+
+    // 覆盖授权额度
+    private AccountDO coverAccount(AccountDO old, BigDecimal amount, Integer hours) {
+        Date now = new Date();
+        if (old.getDeadline().after(now)) {
+            AccountDO entity = new AccountDO();
+            entity.setId(old.getId());
+            entity.setAmount(amount);
+            entity.setDeadline(DateUtil.offsetHour(now, hours));
+            accountService.updateById(entity);
+            old.setAmount(amount);
+            old.setDeadline(entity.getDeadline());
+            old.setModifyDate(now);
+            return old;
+        }
+        return old;
     }
 
     @Override
-    @CacheEvict(value = "MEMBER", key = "'session:'+#account")
-    public boolean doLogin(String account, String loginIp, String accessToken, Date accessExpired) {
+    @Transactional
+    @CachePut(value = "MEMBER", key = "'session:'+#member.account", unless = "#result == null")
+    public MemberDO doLogin(MemberDO member, String loginIp, String accessToken, Date accessExpired) {
         MemberDO entity = new MemberDO();
         entity.setAccessToken(new BCryptPasswordEncoder().encode(accessToken));
         entity.setAccessExpired(accessExpired);
         entity.setLoginDate(new Date());
         entity.setLoginIp(loginIp);
         MemberQuery query = new MemberQuery();
-        query.setAccount(account);
-        return this.update(entity, QueryUtil.buildWrapper(query));
+        query.setAccount(member.getAccount());
+        QueryWrapper wrapper = QueryUtil.buildWrapper(query);
+        this.update(entity, wrapper);
+        member.setLoginToken(accessToken);
+        member.setAccessExpired(accessExpired);
+        member.setLoginDate(new Date());
+        member.setLoginIp(loginIp);
+        return member;
     }
 
     @Override
