@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.*;
 @Api(description = "地址业务")
 @RestController
 @RequestMapping("/api/address")
-public class AddressController extends BaseController {
+public class C_AddressController extends BaseController {
 
     @Autowired
     private AddressService addressService;

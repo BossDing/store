@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Api(description = "会员业务")
 @RestController
 @RequestMapping("/api/member")
-public class MemberController extends BaseController {
+public class C_MemberController extends BaseController {
 
     @ApiOperation(value = "登录信息")
     @RequestMapping(value = "/info", method = RequestMethod.GET)

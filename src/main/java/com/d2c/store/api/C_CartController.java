@@ -33,7 +33,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Api(description = "购物车业务")
 @RestController
 @RequestMapping("/api/cart")
-public class CartController extends BaseController {
+public class C_CartController extends BaseController {
 
     @Autowired
     private CartItemService cartItemService;

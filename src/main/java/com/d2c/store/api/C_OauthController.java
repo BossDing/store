@@ -30,7 +30,7 @@ import java.util.Date;
 @Api(description = "授权业务")
 @RestController
 @RequestMapping("/api/oauth")
-public class OauthController extends BaseController {
+public class C_OauthController extends BaseController {
 
     @Autowired
     private P2PService p2PService;
