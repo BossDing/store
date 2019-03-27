@@ -3,7 +3,6 @@ package com.d2c.store.modules.order.service.impl;
 import com.baomidou.mybatisplus.extension.exceptions.ApiException;
 import com.d2c.store.common.api.base.BaseService;
 import com.d2c.store.common.utils.QueryUtil;
-import com.d2c.store.modules.member.service.MemberService;
 import com.d2c.store.modules.order.mapper.OrderMapper;
 import com.d2c.store.modules.order.model.OrderDO;
 import com.d2c.store.modules.order.model.OrderItemDO;
@@ -17,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author BaiCai
@@ -26,13 +24,9 @@ import java.util.Map;
 public class OrderServiceImpl extends BaseService<OrderMapper, OrderDO> implements OrderService {
 
     @Autowired
-    private OrderMapper orderMapper;
-    @Autowired
     private OrderItemService orderItemService;
     @Autowired
     private ProductSkuService productSkuService;
-    @Autowired
-    private MemberService memberService;
 
     @Override
     @Transactional
@@ -97,11 +91,6 @@ public class OrderServiceImpl extends BaseService<OrderMapper, OrderDO> implemen
         oiq.setOrderSn(new String[]{orderSn});
         success &= orderItemService.remove(QueryUtil.buildWrapper(oiq));
         return success;
-    }
-
-    @Override
-    public Map<String, Object> countDaily(OrderQuery query) {
-        return orderMapper.countDaily(query);
     }
 
 }

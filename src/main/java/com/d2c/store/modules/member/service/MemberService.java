@@ -5,7 +5,6 @@ import com.d2c.store.api.support.OauthBean;
 import com.d2c.store.modules.core.model.P2PDO;
 import com.d2c.store.modules.member.model.MemberDO;
 
-import java.math.BigDecimal;
 import java.util.Date;
 
 /**

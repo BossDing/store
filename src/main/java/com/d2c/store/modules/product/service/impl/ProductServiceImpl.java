@@ -34,6 +34,8 @@ public class ProductServiceImpl extends BaseService<ProductMapper, ProductDO> im
         this.save(product);
         for (ProductSkuDO sku : product.getSkuList()) {
             sku.setProductId(product.getId());
+            sku.setBrandId(product.getBrandId());
+            sku.setSupplierId(product.getSupplierId());
             productSkuService.save(sku);
         }
         return product;
@@ -51,11 +53,16 @@ public class ProductServiceImpl extends BaseService<ProductMapper, ProductDO> im
         for (ProductSkuDO sku : product.getSkuList()) {
             if (sku.getId() != null) {
                 // 更新
+                sku.setProductId(product.getId());
+                sku.setBrandId(product.getBrandId());
+                sku.setSupplierId(product.getSupplierId());
                 productSkuService.updateById(sku);
                 oldMap.remove(sku.getId());
             } else {
                 // 新增
                 sku.setProductId(product.getId());
+                sku.setBrandId(product.getBrandId());
+                sku.setSupplierId(product.getSupplierId());
                 productSkuService.save(sku);
             }
         }
