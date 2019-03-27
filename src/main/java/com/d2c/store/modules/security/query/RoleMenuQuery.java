@@ -17,8 +17,14 @@ public class RoleMenuQuery extends BaseQuery {
     @Condition(condition = ConditionEnum.EQ)
     @ApiModelProperty(value = "角色ID")
     private Long roleId;
+    @Condition(condition = ConditionEnum.IN, field = "role_id")
+    @ApiModelProperty(value = "角色ID")
+    private Long[] roleIds;
     @Condition(condition = ConditionEnum.EQ)
     @ApiModelProperty(value = "菜单ID")
     private Long menuId;
+    @Condition(condition = ConditionEnum.IN, field = "menu_id")
+    @ApiModelProperty(value = "菜单ID")
+    private Long[] menuIds;
 
 }

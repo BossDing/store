@@ -6,9 +6,14 @@ import com.d2c.store.common.api.Asserts;
 import com.d2c.store.common.api.PageModel;
 import com.d2c.store.common.api.base.BaseCtrl;
 import com.d2c.store.common.utils.QueryUtil;
+import com.d2c.store.config.security.authorization.MySecurityMetadataSource;
 import com.d2c.store.modules.security.model.RoleDO;
+import com.d2c.store.modules.security.query.RoleMenuQuery;
 import com.d2c.store.modules.security.query.RoleQuery;
+import com.d2c.store.modules.security.query.UserRoleQuery;
+import com.d2c.store.modules.security.service.RoleMenuService;
 import com.d2c.store.modules.security.service.RoleService;
+import com.d2c.store.modules.security.service.UserRoleService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +32,12 @@ public class RoleController extends BaseCtrl<RoleDO, RoleQuery> {
 
     @Autowired
     private RoleService roleService;
+    @Autowired
+    private RoleMenuService roleMenuService;
+    @Autowired
+    private UserRoleService userRoleService;
+    @Autowired
+    private MySecurityMetadataSource mySecurityMetadataSource;
 
     @Override
     @ApiOperation(value = "新增数据")
@@ -37,6 +48,7 @@ public class RoleController extends BaseCtrl<RoleDO, RoleQuery> {
         query.setCode(entity.getCode());
         RoleDO old = roleService.getOne(QueryUtil.buildWrapper(query));
         Asserts.isNull("角色代码code不能重复", old);
+        mySecurityMetadataSource.clearDataSource();
         return super.insert(entity);
     }
 
@@ -57,6 +69,7 @@ public class RoleController extends BaseCtrl<RoleDO, RoleQuery> {
         query.setCode(entity.getCode());
         List<RoleDO> old = roleService.list(QueryUtil.buildWrapper(query));
         Asserts.ge(1, old.size(), "角色代码code不能重复");
+        mySecurityMetadataSource.clearDataSource();
         return super.update(entity);
     }
 
@@ -65,6 +78,13 @@ public class RoleController extends BaseCtrl<RoleDO, RoleQuery> {
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
     public R delete(Long[] ids) {
+        RoleMenuQuery query = new RoleMenuQuery();
+        query.setRoleIds(ids);
+        roleMenuService.remove(QueryUtil.buildWrapper(query));
+        UserRoleQuery query2 = new UserRoleQuery();
+        query2.setRoleIds(ids);
+        userRoleService.remove(QueryUtil.buildWrapper(query2));
+        mySecurityMetadataSource.clearDataSource();
         return super.delete(ids);
     }
 

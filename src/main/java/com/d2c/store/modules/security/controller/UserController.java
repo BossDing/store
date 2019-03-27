@@ -7,9 +7,12 @@ import com.d2c.store.common.api.PageModel;
 import com.d2c.store.common.api.Response;
 import com.d2c.store.common.api.ResultCode;
 import com.d2c.store.common.api.base.extension.BaseExcelCtrl;
+import com.d2c.store.common.utils.QueryUtil;
 import com.d2c.store.common.utils.RequestUtil;
 import com.d2c.store.modules.security.model.UserDO;
 import com.d2c.store.modules.security.query.UserQuery;
+import com.d2c.store.modules.security.query.UserRoleQuery;
+import com.d2c.store.modules.security.service.UserRoleService;
 import com.d2c.store.modules.security.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -28,6 +31,8 @@ public class UserController extends BaseExcelCtrl<UserDO, UserQuery> {
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private UserRoleService userRoleService;
 
     @ApiOperation(value = "登录过期")
     @RequestMapping(value = "/expired", method = RequestMethod.GET)
@@ -72,6 +77,9 @@ public class UserController extends BaseExcelCtrl<UserDO, UserQuery> {
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
     public R delete(Long[] ids) {
+        UserRoleQuery query = new UserRoleQuery();
+        query.setUserIds(ids);
+        userRoleService.remove(QueryUtil.buildWrapper(query));
         return super.delete(ids);
     }
 

@@ -8,9 +8,12 @@ import com.d2c.store.common.api.Response;
 import com.d2c.store.common.api.ResultCode;
 import com.d2c.store.common.api.base.BaseCtrl;
 import com.d2c.store.common.utils.QueryUtil;
+import com.d2c.store.config.security.authorization.MySecurityMetadataSource;
 import com.d2c.store.modules.security.model.MenuDO;
 import com.d2c.store.modules.security.query.MenuQuery;
+import com.d2c.store.modules.security.query.RoleMenuQuery;
 import com.d2c.store.modules.security.service.MenuService;
+import com.d2c.store.modules.security.service.RoleMenuService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +32,10 @@ public class MenuController extends BaseCtrl<MenuDO, MenuQuery> {
 
     @Autowired
     private MenuService menuService;
+    @Autowired
+    private RoleMenuService roleMenuService;
+    @Autowired
+    private MySecurityMetadataSource mySecurityMetadataSource;
 
     @Override
     @ApiOperation(value = "全部菜单")
@@ -53,6 +60,7 @@ public class MenuController extends BaseCtrl<MenuDO, MenuQuery> {
         query.setPath(entity.getPath());
         MenuDO old = menuService.getOne(QueryUtil.buildWrapper(query));
         Asserts.isNull("Ant型的路径表达式不能重复", old);
+        mySecurityMetadataSource.clearDataSource();
         return super.insert(entity);
     }
 
@@ -73,6 +81,7 @@ public class MenuController extends BaseCtrl<MenuDO, MenuQuery> {
         query.setPath(entity.getPath());
         List<MenuDO> old = menuService.list(QueryUtil.buildWrapper(query));
         Asserts.ge(1, old.size(), "Ant型的路径表达式不能重复");
+        mySecurityMetadataSource.clearDataSource();
         return super.update(entity);
     }
 
@@ -81,6 +90,10 @@ public class MenuController extends BaseCtrl<MenuDO, MenuQuery> {
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
     public R delete(Long[] ids) {
+        RoleMenuQuery query = new RoleMenuQuery();
+        query.setMenuIds(ids);
+        roleMenuService.remove(QueryUtil.buildWrapper(query));
+        mySecurityMetadataSource.clearDataSource();
         return super.delete(ids);
     }
 

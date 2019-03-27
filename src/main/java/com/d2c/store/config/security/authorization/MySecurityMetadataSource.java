@@ -51,6 +51,11 @@ public class MySecurityMetadataSource implements FilterInvocationSecurityMetadat
         }
     }
 
+    public void clearDataSource() {
+        map.clear();
+        map = null;
+    }
+
     @Override
     public Collection<ConfigAttribute> getAttributes(Object o) throws IllegalArgumentException {
         if (map == null) this.loadDataSource();

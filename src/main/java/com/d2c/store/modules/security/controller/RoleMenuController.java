@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.d2c.store.common.api.PageModel;
 import com.d2c.store.common.api.base.BaseCtrl;
 import com.d2c.store.common.utils.QueryUtil;
+import com.d2c.store.config.security.authorization.MySecurityMetadataSource;
 import com.d2c.store.modules.security.model.RoleMenuDO;
 import com.d2c.store.modules.security.query.RoleMenuQuery;
 import com.d2c.store.modules.security.service.RoleMenuService;
@@ -24,6 +25,8 @@ public class RoleMenuController extends BaseCtrl<RoleMenuDO, RoleMenuQuery> {
 
     @Autowired
     private RoleMenuService roleMenuService;
+    @Autowired
+    private MySecurityMetadataSource mySecurityMetadataSource;
 
     @Override
     @ApiOperation(value = "新增数据")
@@ -34,6 +37,7 @@ public class RoleMenuController extends BaseCtrl<RoleMenuDO, RoleMenuQuery> {
         query.setRoleId(entity.getRoleId());
         query.setMenuId(entity.getMenuId());
         roleMenuService.remove(QueryUtil.buildWrapper(query));
+        mySecurityMetadataSource.clearDataSource();
         return super.insert(entity);
     }
 
@@ -58,6 +62,7 @@ public class RoleMenuController extends BaseCtrl<RoleMenuDO, RoleMenuQuery> {
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
     public R delete(Long[] ids) {
+        mySecurityMetadataSource.clearDataSource();
         return super.delete(ids);
     }
 
