@@ -60,4 +60,17 @@ public class ProductController extends BaseCtrl<ProductDO, ProductQuery> {
         return Response.restResult(service.getById(entity.getId()), ResultCode.SUCCESS);
     }
 
+    @ApiOperation(value = "更改状态")
+    @RequestMapping(value = "/status", method = RequestMethod.POST)
+    public R status(Long id, Integer status) {
+        Asserts.notNull(ResultCode.RESPONSE_DATA_NULL, id, status);
+        ProductDO product = productService.getById(id);
+        Asserts.notNull(ResultCode.RESPONSE_DATA_NULL, product);
+        ProductDO entity = new ProductDO();
+        entity.setId(id);
+        entity.setStatus(status);
+        productService.updateById(entity);
+        return Response.restResult(null, ResultCode.SUCCESS);
+    }
+
 }

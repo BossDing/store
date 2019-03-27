@@ -48,6 +48,8 @@ public class UserDO extends BaseDelDO {
     private Date loginDate;
     @ApiModelProperty(value = "最后登录IP")
     private String loginIp;
+    @ApiModelProperty(value = "P2P平台ID")
+    private Long p2pId;
     @TableField(exist = false)
     @ApiModelProperty(value = "用户拥有的角色")
     private List<RoleDO> roles = new ArrayList<>();
