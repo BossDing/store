@@ -16,8 +16,6 @@ public class OauthBean implements Serializable {
 
     @ApiModelProperty(value = "平台ID")
     private String appId;
-    @ApiModelProperty(value = "平台密钥")
-    private String secret;
     @ApiModelProperty(value = "授权账号")
     private String mobile;
     @ApiModelProperty(value = "真实姓名")
@@ -26,5 +24,7 @@ public class OauthBean implements Serializable {
     private String identity;
     @ApiModelProperty(value = "授权金额")
     private BigDecimal amount;
+    @ApiModelProperty(value = "请求签名")
+    private String sign;
 
 }
