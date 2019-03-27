@@ -34,6 +34,9 @@ public class ProductDO extends BaseDelDO {
     @ApiModelProperty(value = "销售价")
     private BigDecimal price;
     @Assert(type = AssertEnum.NOT_NULL)
+    @ApiModelProperty(value = "市场价")
+    private BigDecimal marketPrice;
+    @Assert(type = AssertEnum.NOT_NULL)
     @ApiModelProperty(value = "商品库存")
     private Integer stock;
     @Assert(type = AssertEnum.NOT_NULL)
@@ -42,6 +45,9 @@ public class ProductDO extends BaseDelDO {
     @Assert(type = AssertEnum.NOT_NULL)
     @ApiModelProperty(value = "品类ID")
     private Long categoryId;
+    @Assert(type = AssertEnum.NOT_NULL)
+    @ApiModelProperty(value = "供应商ID")
+    private Long supplierId;
     @ApiModelProperty(value = "描述")
     private String description;
     @Assert(type = AssertEnum.NOT_NULL)

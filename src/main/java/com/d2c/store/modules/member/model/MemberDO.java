@@ -34,6 +34,8 @@ public class MemberDO extends BaseDelDO implements IMember {
     private String nickname;
     @ApiModelProperty(value = "头像")
     private String avatar;
+    @ApiModelProperty(value = "身份证")
+    private String identity;
     @ApiModelProperty(value = "令牌")
     private String accessToken;
     @ApiModelProperty(value = "令牌时效")

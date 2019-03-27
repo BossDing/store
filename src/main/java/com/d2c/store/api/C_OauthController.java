@@ -43,7 +43,7 @@ public class C_OauthController extends BaseController {
         P2PDO p2pDO = p2PService.getById(oauthBean.getAppId());
         Asserts.notNull("appId不正确，请仔细检查", p2pDO);
         Asserts.eq(oauthBean.getSecret(), p2pDO.getSecret(), "secret不正确，请仔细检查");
-        MemberDO member = memberService.doOauth(oauthBean.getMobile(), oauthBean.getAmount(), RequestUtil.getRequestIp(request), p2pDO);
+        MemberDO member = memberService.doOauth(oauthBean, p2pDO, RequestUtil.getRequestIp(request));
         Date accessExpired = member.getAccountInfo().getDeadline();
         String accessToken = SecurityConstant.TOKEN_PREFIX + Jwts.builder()
                 .setSubject(member.getAccount())

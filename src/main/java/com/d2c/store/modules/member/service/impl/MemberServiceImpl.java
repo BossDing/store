@@ -2,6 +2,7 @@ package com.d2c.store.modules.member.service.impl;
 
 import cn.hutool.core.date.DateUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.d2c.store.api.support.OauthBean;
 import com.d2c.store.common.api.base.BaseService;
 import com.d2c.store.common.utils.QueryUtil;
 import com.d2c.store.modules.core.model.P2PDO;
@@ -39,10 +40,10 @@ public class MemberServiceImpl extends BaseService<MemberMapper, MemberDO> imple
 
     @Override
     @Transactional
-    @Cacheable(value = "MEMBER", key = "'session:'+#account", unless = "#result == null")
-    public MemberDO doOauth(String account, BigDecimal amount, String loginIp, P2PDO p2pDO) {
+    @Cacheable(value = "MEMBER", key = "'session:'+#oauthBean.account", unless = "#result == null")
+    public MemberDO doOauth(OauthBean oauthBean, P2PDO p2pDO, String loginIp) {
         MemberQuery mq = new MemberQuery();
-        mq.setAccount(account);
+        mq.setAccount(oauthBean.getMobile());
         MemberDO member = this.getOne(QueryUtil.buildWrapper(mq));
         if (member != null) {
             // 原已注册会员
@@ -52,22 +53,24 @@ public class MemberServiceImpl extends BaseService<MemberMapper, MemberDO> imple
             AccountDO accountDO = accountService.getOne(QueryUtil.buildWrapper(aq));
             if (accountDO != null) {
                 // 覆盖授权额度
-                member.setAccountInfo(this.coverAccount(accountDO, amount, p2pDO.getOauthTime()));
+                member.setAccountInfo(this.coverAccount(accountDO, oauthBean.getAmount(), p2pDO.getOauthTime()));
             } else {
                 // 给予授权额度
-                member.setAccountInfo(this.renderAccount(member.getId(), p2pDO.getId(), amount, p2pDO.getOauthTime()));
+                member.setAccountInfo(this.renderAccount(member.getId(), p2pDO.getId(), oauthBean.getAmount(), p2pDO.getOauthTime()));
             }
             return member;
         } else {
             // 原未注册会员
             MemberDO entity = new MemberDO();
-            entity.setAccount(account);
-            entity.setPassword(new BCryptPasswordEncoder().encode(account.substring(account.length() - 6)));
+            entity.setAccount(oauthBean.getMobile());
+            entity.setPassword(new BCryptPasswordEncoder().encode(oauthBean.getMobile().substring(oauthBean.getMobile().length() - 6)));
+            entity.setNickname(oauthBean.getName());
+            entity.setIdentity(oauthBean.getIdentity());
             entity.setRegisterIp(loginIp);
             entity.setStatus(1);
             super.save(entity);
             // 给予授权额度
-            entity.setAccountInfo(this.renderAccount(entity.getId(), p2pDO.getId(), amount, p2pDO.getOauthTime()));
+            entity.setAccountInfo(this.renderAccount(entity.getId(), p2pDO.getId(), oauthBean.getAmount(), p2pDO.getOauthTime()));
             return entity;
         }
     }

@@ -20,6 +20,10 @@ public class OauthBean implements Serializable {
     private String secret;
     @ApiModelProperty(value = "授权账号")
     private String mobile;
+    @ApiModelProperty(value = "真实姓名")
+    private String name;
+    @ApiModelProperty(value = "身份证号")
+    private String identity;
     @ApiModelProperty(value = "授权金额")
     private BigDecimal amount;
 
