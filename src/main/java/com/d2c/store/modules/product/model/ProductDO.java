@@ -40,6 +40,9 @@ public class ProductDO extends BaseDelDO {
     @ApiModelProperty(value = "商品库存")
     private Integer stock;
     @Assert(type = AssertEnum.NOT_NULL)
+    @ApiModelProperty(value = "运费公式")
+    private String freight;
+    @Assert(type = AssertEnum.NOT_NULL)
     @ApiModelProperty(value = "品牌ID")
     private Long brandId;
     @Assert(type = AssertEnum.NOT_NULL)

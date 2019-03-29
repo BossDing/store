@@ -61,5 +61,8 @@ public class CartItemDO extends BaseDO implements ITradeItem {
     @TableField(exist = false)
     @ApiModelProperty(value = "实时单价")
     private BigDecimal realPrice;
+    @TableField(exist = false)
+    @ApiModelProperty(value = "运费公式")
+    private String freight;
 
 }

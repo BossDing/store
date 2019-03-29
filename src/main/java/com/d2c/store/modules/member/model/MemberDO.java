@@ -50,6 +50,8 @@ public class MemberDO extends BaseDelDO implements IMember {
     @Assert(type = AssertEnum.NOT_NULL)
     @ApiModelProperty(value = "状态 1,0")
     private Integer status;
+    @ApiModelProperty(value = "性别")
+    private String sex;
     @TableField(exist = false)
     @ApiModelProperty(value = "登录返回token")
     private String loginToken;

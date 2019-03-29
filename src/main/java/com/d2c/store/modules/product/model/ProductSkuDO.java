@@ -43,5 +43,8 @@ public class ProductSkuDO extends BaseDelDO {
     @Assert(type = AssertEnum.NOT_NULL)
     @ApiModelProperty(value = "库存")
     private Integer stock;
+    @Assert(type = AssertEnum.NOT_NULL)
+    @ApiModelProperty(value = "运费")
+    private String freight;
 
 }

@@ -21,6 +21,7 @@ public class FreightDO extends BaseDO {
     @Assert(type = AssertEnum.NOT_NULL)
     @ApiModelProperty(value = "名称")
     private String name;
+    @Assert(type = AssertEnum.NOT_NULL)
     @ApiModelProperty(value = "公式")
     private String formula;
 

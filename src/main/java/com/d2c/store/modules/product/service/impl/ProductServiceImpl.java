@@ -39,6 +39,7 @@ public class ProductServiceImpl extends BaseService<ProductMapper, ProductDO> im
             sku.setProductId(product.getId());
             sku.setBrandId(product.getBrandId());
             sku.setSupplierId(product.getSupplierId());
+            sku.setFreight(product.getFreight());
             productSkuService.save(sku);
         }
         return product;
@@ -59,6 +60,7 @@ public class ProductServiceImpl extends BaseService<ProductMapper, ProductDO> im
                 sku.setProductId(product.getId());
                 sku.setBrandId(product.getBrandId());
                 sku.setSupplierId(product.getSupplierId());
+                sku.setFreight(product.getFreight());
                 productSkuService.updateById(sku);
                 oldMap.remove(sku.getId());
             } else {
@@ -66,6 +68,7 @@ public class ProductServiceImpl extends BaseService<ProductMapper, ProductDO> im
                 sku.setProductId(product.getId());
                 sku.setBrandId(product.getBrandId());
                 sku.setSupplierId(product.getSupplierId());
+                sku.setFreight(product.getFreight());
                 productSkuService.save(sku);
             }
         }

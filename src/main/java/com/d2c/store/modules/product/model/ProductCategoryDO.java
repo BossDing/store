@@ -25,6 +25,9 @@ public class ProductCategoryDO extends BaseDO {
     @Assert(type = AssertEnum.NOT_NULL)
     @ApiModelProperty(value = "名称")
     private String name;
+    @Assert(type = AssertEnum.NOT_NULL)
+    @ApiModelProperty(value = "图片")
+    private String pic;
     @ApiModelProperty(value = "父级ID")
     private Long parentId;
     @Assert(type = AssertEnum.NOT_NULL)
