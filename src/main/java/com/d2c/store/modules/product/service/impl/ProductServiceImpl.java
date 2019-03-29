@@ -1,10 +1,13 @@
 package com.d2c.store.modules.product.service.impl;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.d2c.store.common.api.PageModel;
 import com.d2c.store.common.api.base.BaseService;
 import com.d2c.store.common.utils.QueryUtil;
 import com.d2c.store.modules.product.mapper.ProductMapper;
 import com.d2c.store.modules.product.model.ProductDO;
 import com.d2c.store.modules.product.model.ProductSkuDO;
+import com.d2c.store.modules.product.query.ProductQuery;
 import com.d2c.store.modules.product.query.ProductSkuQuery;
 import com.d2c.store.modules.product.service.ProductService;
 import com.d2c.store.modules.product.service.ProductSkuService;
@@ -92,6 +95,20 @@ public class ProductServiceImpl extends BaseService<ProductMapper, ProductDO> im
     @Transactional
     public int doReturnStock(Long id, Integer quantity) {
         return productMapper.doReturnStock(id, quantity);
+    }
+
+    @Override
+    public Page<ProductDO> findByQuery(Long p2pId, ProductQuery query, PageModel page) {
+        Page<ProductDO> pager = new Page<>();
+        int total = productMapper.countByQuery(p2pId, query);
+        if (total > 0) {
+            List<ProductDO> list = productMapper.findByQuery(p2pId, query, page.offset(), page.getSize());
+            pager.setCurrent(page.getCurrent());
+            pager.setSize(page.getSize());
+            pager.setTotal(total);
+            pager.setRecords(list);
+        }
+        return pager;
     }
 
 }

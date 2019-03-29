@@ -62,6 +62,10 @@ public class OrderItemDO extends BaseDelDO implements ITradeItem {
     private Long supplierId;
     @Prevent
     @Assert(type = AssertEnum.NOT_NULL)
+    @ApiModelProperty(value = "订单ID")
+    private Long orderId;
+    @Prevent
+    @Assert(type = AssertEnum.NOT_NULL)
     @ApiModelProperty(value = "订单号")
     private String orderSn;
     @Assert(type = AssertEnum.NOT_NULL)

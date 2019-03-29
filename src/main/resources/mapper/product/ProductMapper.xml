@@ -17,4 +17,22 @@
         WHERE id = #{id}
     </update>
 
+    <select id="findByQuery" resultMap="baseMap">
+        SELECT p.* FROM P_PRODUCT p, P_P2P_PRODUCT r
+        WHERE p.id=r.product_id AND r.p2p_id=#{p2pId}
+        <if test="query.categoryId != null">
+            AND p.category_id = #{query.categoryId}
+        </if>
+        ORDER BY p.create_date DESC
+        LIMIT #{offset}, #{size}
+    </select>
+
+    <select id="countByQuery" resultType="int">
+        SELECT COUNT(p.id) FROM P_PRODUCT p, P_P2P_PRODUCT r
+        WHERE p.id=r.product_id AND r.p2p_id=#{p2pId}
+        <if test="query.categoryId != null">
+            AND p.category_id = #{query.categoryId}
+        </if>
+    </select>
+
 </mapper>

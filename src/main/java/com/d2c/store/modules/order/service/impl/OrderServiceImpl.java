@@ -50,6 +50,7 @@ public class OrderServiceImpl extends BaseService<OrderMapper, OrderDO> implemen
             if (success == 0) {
                 throw new ApiException(orderItem.getProductSkuId() + "的SKU库存不足");
             }
+            orderItem.setOrderId(order.getId());
             orderItem.setOrderSn(order.getSn());
             orderItem.setType(order.getType());
             orderItemService.save(orderItem);
