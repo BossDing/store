@@ -40,7 +40,7 @@ public class MemberServiceImpl extends BaseService<MemberMapper, MemberDO> imple
 
     @Override
     @Transactional
-    @Cacheable(value = "MEMBER", key = "'session:'+#oauthBean.account", unless = "#result == null")
+    @Cacheable(value = "MEMBER", key = "'session:'+#oauthBean.mobile", unless = "#result == null")
     public MemberDO doOauth(OauthBean oauthBean, P2PDO p2pDO, String loginIp) {
         MemberQuery mq = new MemberQuery();
         mq.setAccount(oauthBean.getMobile());
@@ -81,7 +81,7 @@ public class MemberServiceImpl extends BaseService<MemberMapper, MemberDO> imple
         entity.setMemberId(memberId);
         entity.setP2pId(p2pId);
         entity.setAmount(amount);
-        entity.setDeadline(DateUtil.offsetHour(new Date(), hours));
+        entity.setDeadline(DateUtil.offsetHour(new Date(), hours).toJdkDate());
         accountService.save(entity);
         return entity;
     }
@@ -93,7 +93,7 @@ public class MemberServiceImpl extends BaseService<MemberMapper, MemberDO> imple
             AccountDO entity = new AccountDO();
             entity.setId(old.getId());
             entity.setAmount(amount);
-            entity.setDeadline(DateUtil.offsetHour(now, hours));
+            entity.setDeadline(DateUtil.offsetHour(now, hours).toJdkDate());
             accountService.updateById(entity);
             old.setAmount(amount);
             old.setDeadline(entity.getDeadline());
@@ -116,7 +116,6 @@ public class MemberServiceImpl extends BaseService<MemberMapper, MemberDO> imple
         query.setAccount(member.getAccount());
         QueryWrapper wrapper = QueryUtil.buildWrapper(query);
         this.update(entity, wrapper);
-        member.setLoginToken(accessToken);
         member.setAccessExpired(accessExpired);
         member.setLoginDate(new Date());
         member.setLoginIp(loginIp);

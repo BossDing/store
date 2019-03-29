@@ -19,7 +19,6 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -41,7 +40,7 @@ public class C_OauthController extends BaseController {
 
     @ApiOperation(value = "授权入口")
     @RequestMapping(value = "", method = RequestMethod.POST)
-    public R<String> oauth(@RequestBody OauthBean oauthBean) {
+    public R<String> oauth(OauthBean oauthBean) {
         P2PDO p2pDO = p2PService.getById(oauthBean.getAppId());
         Asserts.notNull("appId不正确，请仔细检查", p2pDO);
         String sign = oauthBean.getSign();
@@ -69,8 +68,8 @@ public class C_OauthController extends BaseController {
             List<String> keys = new ArrayList(params.keySet());
             Collections.sort(keys);
             for (int i = 0; i < keys.size(); ++i) {
-                String key = (String) keys.get(i);
-                String value = (String) params.get(key);
+                String key = String.valueOf(keys.get(i));
+                String value = String.valueOf(params.get(key));
                 content.append((i == 0 ? "" : "&") + key + "=" + value);
             }
             return content.toString();
