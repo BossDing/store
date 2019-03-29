@@ -4,8 +4,10 @@ import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.extension.exceptions.ApiException;
 import com.d2c.store.common.api.Asserts;
 import com.d2c.store.common.api.ResultCode;
+import com.d2c.store.common.utils.SpringUtil;
 import com.d2c.store.config.security.constant.SecurityConstant;
 import com.d2c.store.modules.member.model.MemberDO;
+import com.d2c.store.modules.member.service.MemberService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,11 +39,12 @@ public class LoginMemberHolder {
                     .getBody();
             // 解析得到账号和平台ID
             String account = claims.getSubject();
-            String p2pId = claims.get(SecurityConstant.AUTHORITIES).toString();
+            Long p2pId = Long.valueOf(claims.get(SecurityConstant.AUTHORITIES).toString());
             // 获取登录信息
-            MemberDO member = (MemberDO) redisTemplate.opsForValue().get("MEMBER::session:" + account);
+            MemberDO member = SpringUtil.getBean(MemberService.class).findLogin(account, p2pId);
             // 登录信息不存在，登录过期
             Asserts.notNull(ResultCode.LOGIN_EXPIRED, member);
+            Asserts.notNull(ResultCode.ACCESS_DENIED, member.getAccountInfo());
             // 平台ID不符合，无权访问
             Asserts.eq(member.getAccountInfo().getP2pId(), p2pId, ResultCode.ACCESS_DENIED);
             // Token信息已经变更，登录过期

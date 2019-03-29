@@ -39,8 +39,21 @@ public class MemberServiceImpl extends BaseService<MemberMapper, MemberDO> imple
     private RedisTemplate redisTemplate;
 
     @Override
+    @Cacheable(value = "MEMBER", key = "'session:'+#account", unless = "#result == null")
+    public MemberDO findLogin(String account, Long p2pId) {
+        MemberQuery mq = new MemberQuery();
+        mq.setAccount(account);
+        MemberDO member = this.getOne(QueryUtil.buildWrapper(mq));
+        AccountQuery aq = new AccountQuery();
+        aq.setMemberId(member.getId());
+        aq.setP2pId(p2pId);
+        AccountDO accountDO = accountService.getOne(QueryUtil.buildWrapper(aq));
+        member.setAccountInfo(accountDO);
+        return member;
+    }
+
+    @Override
     @Transactional
-    @Cacheable(value = "MEMBER", key = "'session:'+#oauthBean.mobile", unless = "#result == null")
     public MemberDO doOauth(OauthBean oauthBean, P2PDO p2pDO, String loginIp) {
         MemberQuery mq = new MemberQuery();
         mq.setAccount(oauthBean.getMobile());

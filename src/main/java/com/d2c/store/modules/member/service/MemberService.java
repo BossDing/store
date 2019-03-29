@@ -12,6 +12,8 @@ import java.util.Date;
  */
 public interface MemberService extends IService<MemberDO> {
 
+    MemberDO findLogin(String account, Long p2pId);
+
     MemberDO doOauth(OauthBean oauthBean, P2PDO p2pDO, String loginIp);
 
     MemberDO doLogin(MemberDO member, String loginIp, String accessToken, Date accessExpired);
