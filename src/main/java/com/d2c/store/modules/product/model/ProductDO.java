@@ -14,6 +14,7 @@ import lombok.EqualsAndHashCode;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author BaiCai
@@ -62,6 +63,9 @@ public class ProductDO extends BaseDelDO {
     @TableField(exist = false)
     @ApiModelProperty(value = "品类树")
     private ProductCategoryDO category;
+    @TableField(exist = false)
+    @ApiModelProperty(value = "规格分组")
+    private Map<String, List<String>> standard;
     @TableField(exist = false)
     @ApiModelProperty(value = "商品的SKU列表")
     private List<ProductSkuDO> skuList = new ArrayList<>();

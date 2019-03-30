@@ -28,8 +28,8 @@ public class C_P2PController extends BaseController {
 
     @ApiOperation(value = "根据ID查询")
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public R<P2PDO> select(@PathVariable Long id) {
-        P2PDO p2p = p2PService.getById(id);
+    public R<P2PDO> select(@PathVariable String id) {
+        P2PDO p2p = p2PService.getById(Long.valueOf(id));
         Asserts.notNull(ResultCode.RESPONSE_DATA_NULL, p2p);
         p2p.setSecret(null);
         return Response.restResult(p2p, ResultCode.SUCCESS);
