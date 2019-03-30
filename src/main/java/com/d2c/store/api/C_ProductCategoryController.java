@@ -36,7 +36,7 @@ public class C_ProductCategoryController extends BaseController {
         ProductCategoryQuery query = new ProductCategoryQuery();
         page.setPs(PageModel.MAX_SIZE);
         page.setDesc("sort", "create_date");
-        Page<ProductCategoryDO> pager = (Page<ProductCategoryDO>) productCategoryService.page(page, QueryUtil.buildWrapper(query));
+        Page<ProductCategoryDO> pager = (Page<ProductCategoryDO>) productCategoryService.page(page, QueryUtil.buildWrapper(query, false));
         Map<Long, ProductCategoryDO> first = new LinkedHashMap<>();
         List<ProductCategoryDO> second = new ArrayList<>();
         // 一级分类
