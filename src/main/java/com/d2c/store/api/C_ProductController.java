@@ -70,8 +70,8 @@ public class C_ProductController extends BaseController {
     }
 
     // 规格分组
-    private Map<String, List<String>> groupStandard(List<ProductSkuDO> skuList) {
-        Map<String, List<String>> map = new LinkedHashMap<>();
+    private Map<String, List<JSONObject>> groupStandard(List<ProductSkuDO> skuList) {
+        Map<String, List<JSONObject>> map = new LinkedHashMap<>();
         for (ProductSkuDO sku : skuList) {
             if (StrUtil.isNotBlank(sku.getStandard())) {
                 JSONArray array = JSONArray.parseArray(sku.getStandard());
@@ -82,7 +82,9 @@ public class C_ProductController extends BaseController {
                     if (map.get(name) == null) {
                         map.put(name, new ArrayList<>());
                     }
-                    map.get(name).add(value);
+                    if (map.get(name).stream().noneMatch(item -> value.equals(item.getString("value")))) {
+                        map.get(name).add(json);
+                    }
                 }
             }
         }

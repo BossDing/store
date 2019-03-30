@@ -1,6 +1,7 @@
 package com.d2c.store.modules.product.model;
 
 import cn.hutool.core.util.StrUtil;
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.d2c.store.common.api.annotation.Assert;
@@ -65,7 +66,7 @@ public class ProductDO extends BaseDelDO {
     private ProductCategoryDO category;
     @TableField(exist = false)
     @ApiModelProperty(value = "规格分组")
-    private Map<String, List<String>> standard;
+    private Map<String, List<JSONObject>> standard;
     @TableField(exist = false)
     @ApiModelProperty(value = "商品的SKU列表")
     private List<ProductSkuDO> skuList = new ArrayList<>();
