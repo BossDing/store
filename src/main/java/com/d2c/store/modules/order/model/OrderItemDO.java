@@ -88,6 +88,9 @@ public class OrderItemDO extends BaseDelDO implements ITradeItem {
     @ApiModelProperty(value = "物流单号")
     private String logisticsNum;
     @TableField(exist = false)
+    @ApiModelProperty(value = "运费公式")
+    private String freight;
+    @TableField(exist = false)
     @ApiModelProperty(value = "类型名")
     private String typeName;
     @TableField(exist = false)

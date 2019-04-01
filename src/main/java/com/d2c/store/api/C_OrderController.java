@@ -236,6 +236,7 @@ public class C_OrderController extends BaseController {
         orderItem.setSupplierId(sku.getSupplierId());
         orderItem.setProductPrice(sku.getSellPrice());
         orderItem.setRealPrice(sku.getSellPrice());
+        orderItem.setFreight(sku.getFreight());
         orderItem.setPayAmount(BigDecimal.ZERO);
     }
 
