@@ -138,7 +138,7 @@ public class C_OrderController extends BaseController {
         order.setMemberAccount(member.getAccount());
         order.setP2pId(member.getAccountInfo().getP2pId());
         order.setType(OrderDO.TypeEnum.NORMAL.name());
-        order.setStatus(OrderDO.StatusEnum.WAIT_PAY.name());
+        order.setStatus(OrderDO.StatusEnum.WAIT_MEM_SIGN.name());
         order.setProductAmount(BigDecimal.ZERO);
         order.setPayAmount(BigDecimal.ZERO);
         return order;
@@ -151,7 +151,7 @@ public class C_OrderController extends BaseController {
         order.setSn(PrefixConstant.ORDER_PREFIX + String.valueOf(snowFlake.nextId()));
         order.setP2pId(member.getAccountInfo().getP2pId());
         order.setType(OrderDO.TypeEnum.NORMAL.name());
-        order.setStatus(OrderDO.StatusEnum.WAIT_PAY.name());
+        order.setStatus(OrderDO.StatusEnum.WAIT_MEM_SIGN.name());
         order.setProductAmount(BigDecimal.ZERO);
         order.setPayAmount(BigDecimal.ZERO);
         return order;
@@ -232,7 +232,7 @@ public class C_OrderController extends BaseController {
 
     private void buildOrderItem(ProductSkuDO sku, OrderItemDO orderItem) {
         orderItem.setType(OrderDO.TypeEnum.NORMAL.name());
-        orderItem.setStatus(OrderItemDO.StatusEnum.WAIT_PAY.name());
+        orderItem.setStatus(OrderItemDO.StatusEnum.WAIT_SIGN.name());
         orderItem.setBrandId(sku.getBrandId());
         orderItem.setSupplierId(sku.getSupplierId());
         orderItem.setProductPrice(sku.getSellPrice());
@@ -281,7 +281,7 @@ public class C_OrderController extends BaseController {
     public R cancel(Long id) {
         OrderDO order = orderService.getById(id);
         Asserts.notNull(ResultCode.RESPONSE_DATA_NULL, order);
-        Asserts.eq(order.getStatus(), OrderDO.StatusEnum.WAIT_PAY.name(), "订单状态异常");
+        Asserts.eq(order.getStatus(), OrderDO.StatusEnum.WAIT_MEM_SIGN.name(), "订单状态异常");
         MemberDO member = loginMemberHolder.getLoginMember();
         Asserts.eq(order.getMemberId(), member.getId(), "订单不属于本人");
         OrderItemQuery itemQuery = new OrderItemQuery();
