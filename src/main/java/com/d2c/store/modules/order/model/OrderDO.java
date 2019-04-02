@@ -62,6 +62,9 @@ public class OrderDO extends BaseDelDO implements IAddress {
     @ApiModelProperty(value = "商品总价")
     private BigDecimal productAmount;
     @Assert(type = AssertEnum.NOT_NULL)
+    @ApiModelProperty(value = "运费价格")
+    private BigDecimal freightAmount;
+    @Assert(type = AssertEnum.NOT_NULL)
     @ApiModelProperty(value = "实际支付")
     private BigDecimal payAmount;
     @TableField(exist = false)

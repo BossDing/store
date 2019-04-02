@@ -4,6 +4,7 @@ import cn.hutool.core.date.DateUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.d2c.store.api.support.OauthBean;
 import com.d2c.store.common.api.base.BaseService;
+import com.d2c.store.common.utils.ExecutorUtil;
 import com.d2c.store.common.utils.QueryUtil;
 import com.d2c.store.modules.core.model.P2PDO;
 import com.d2c.store.modules.member.mapper.MemberMapper;
@@ -13,6 +14,7 @@ import com.d2c.store.modules.member.query.AccountQuery;
 import com.d2c.store.modules.member.query.MemberQuery;
 import com.d2c.store.modules.member.service.AccountService;
 import com.d2c.store.modules.member.service.MemberService;
+import com.d2c.store.rabbitmq.sender.AccountDelayedSender;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
@@ -37,6 +39,8 @@ public class MemberServiceImpl extends BaseService<MemberMapper, MemberDO> imple
     private AccountService accountService;
     @Autowired
     private RedisTemplate redisTemplate;
+    @Autowired
+    private AccountDelayedSender accountDelayedSender;
 
     @Override
     @Cacheable(value = "MEMBER", key = "'session:'+#account", unless = "#result == null")
@@ -96,6 +100,11 @@ public class MemberServiceImpl extends BaseService<MemberMapper, MemberDO> imple
         entity.setAmount(amount);
         entity.setDeadline(DateUtil.offsetHour(new Date(), hours).toJdkDate());
         accountService.save(entity);
+        // 发送延迟消息
+        ExecutorUtil.fixedPool.submit(() -> {
+                    accountDelayedSender.send(entity.getId().toString(), hours * 60 * 60L);
+                }
+        );
         return entity;
     }
 
@@ -108,6 +117,11 @@ public class MemberServiceImpl extends BaseService<MemberMapper, MemberDO> imple
             entity.setAmount(amount);
             entity.setDeadline(DateUtil.offsetHour(now, hours).toJdkDate());
             accountService.updateById(entity);
+            // 发送延迟消息
+            ExecutorUtil.fixedPool.submit(() -> {
+                        accountDelayedSender.send(entity.getId().toString(), hours * 60 * 60L);
+                    }
+            );
             old.setAmount(amount);
             old.setDeadline(entity.getDeadline());
             old.setModifyDate(now);

@@ -13,10 +13,13 @@ import com.d2c.store.common.api.ResultCode;
 import com.d2c.store.common.utils.QueryUtil;
 import com.d2c.store.modules.product.model.BrandDO;
 import com.d2c.store.modules.product.model.ProductDO;
+import com.d2c.store.modules.product.model.ProductDetailDO;
 import com.d2c.store.modules.product.model.ProductSkuDO;
+import com.d2c.store.modules.product.query.ProductDetailQuery;
 import com.d2c.store.modules.product.query.ProductQuery;
 import com.d2c.store.modules.product.query.ProductSkuQuery;
 import com.d2c.store.modules.product.service.BrandService;
+import com.d2c.store.modules.product.service.ProductDetailService;
 import com.d2c.store.modules.product.service.ProductService;
 import com.d2c.store.modules.product.service.ProductSkuService;
 import io.swagger.annotations.Api;
@@ -41,11 +44,13 @@ import java.util.Map;
 public class C_ProductController extends BaseController {
 
     @Autowired
+    private BrandService brandService;
+    @Autowired
     private ProductService productService;
     @Autowired
     private ProductSkuService productSkuService;
     @Autowired
-    private BrandService brandService;
+    private ProductDetailService productDetailService;
 
     @ApiOperation(value = "分页查询")
     @RequestMapping(value = "/list", method = RequestMethod.GET)
@@ -89,6 +94,16 @@ public class C_ProductController extends BaseController {
             }
         }
         return map;
+    }
+
+    @ApiOperation(value = "根据商品ID查询详情")
+    @RequestMapping(value = "/detail/{productId}", method = RequestMethod.GET)
+    public R<ProductDetailDO> selectDetail(@PathVariable Long productId) {
+        ProductDetailQuery query = new ProductDetailQuery();
+        query.setProductId(productId);
+        ProductDetailDO productDetail = productDetailService.getOne(QueryUtil.buildWrapper(query));
+        Asserts.notNull(ResultCode.RESPONSE_DATA_NULL, productDetail);
+        return Response.restResult(productDetail, ResultCode.SUCCESS);
     }
 
 }

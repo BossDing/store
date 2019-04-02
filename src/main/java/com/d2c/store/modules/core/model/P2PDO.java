@@ -28,6 +28,8 @@ public class P2PDO extends BaseDelDO {
     private String name;
     @ApiModelProperty(value = "联系方式")
     private String mobile;
+    @ApiModelProperty(value = "首页banner")
+    private String banner;
     @Assert(type = AssertEnum.NOT_NULL)
     @ApiModelProperty(value = "销售金额")
     private BigDecimal salesAmount;

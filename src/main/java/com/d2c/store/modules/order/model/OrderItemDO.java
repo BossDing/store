@@ -81,15 +81,15 @@ public class OrderItemDO extends BaseDelDO implements ITradeItem {
     @ApiModelProperty(value = "实时单价")
     private BigDecimal realPrice;
     @Assert(type = AssertEnum.NOT_NULL)
+    @ApiModelProperty(value = "运费价格")
+    private BigDecimal freightAmount;
+    @Assert(type = AssertEnum.NOT_NULL)
     @ApiModelProperty(value = "实际支付")
     private BigDecimal payAmount;
     @ApiModelProperty(value = "物流公司")
     private String logisticsCom;
     @ApiModelProperty(value = "物流单号")
     private String logisticsNum;
-    @TableField(exist = false)
-    @ApiModelProperty(value = "运费公式")
-    private String freight;
     @TableField(exist = false)
     @ApiModelProperty(value = "类型名")
     private String typeName;

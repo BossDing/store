@@ -35,4 +35,10 @@
         </if>
     </select>
 
+    <update id="doUpdateSales">
+        UPDATE P_PRODUCT
+        SET sales = sales + #{quantity}, modify_date=now()
+        WHERE id = #{id}
+    </update>
+
 </mapper>

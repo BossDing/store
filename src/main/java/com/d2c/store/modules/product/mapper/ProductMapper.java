@@ -20,4 +20,6 @@ public interface ProductMapper extends BaseMapper<ProductDO> {
 
     int countByQuery(@Param("p2pId") Long p2pId, @Param("query") ProductQuery query);
 
+    int doUpdateSales(@Param("id") Long id, @Param("quantity") Integer quantity);
+
 }

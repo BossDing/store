@@ -26,6 +26,7 @@ import com.d2c.store.modules.order.query.OrderQuery;
 import com.d2c.store.modules.order.service.CartItemService;
 import com.d2c.store.modules.order.service.OrderItemService;
 import com.d2c.store.modules.order.service.OrderService;
+import com.d2c.store.modules.product.model.FreightDO;
 import com.d2c.store.modules.product.model.ProductDO;
 import com.d2c.store.modules.product.model.ProductSkuDO;
 import com.d2c.store.modules.product.service.ProductService;
@@ -236,7 +237,7 @@ public class C_OrderController extends BaseController {
         orderItem.setSupplierId(sku.getSupplierId());
         orderItem.setProductPrice(sku.getSellPrice());
         orderItem.setRealPrice(sku.getSellPrice());
-        orderItem.setFreight(sku.getFreight());
+        orderItem.setFreightAmount(FreightDO.calculate(orderItem.getQuantity(), sku.getFreight()));
         orderItem.setPayAmount(BigDecimal.ZERO);
     }
 
