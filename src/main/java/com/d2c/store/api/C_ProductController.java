@@ -55,6 +55,7 @@ public class C_ProductController extends BaseController {
     @ApiOperation(value = "分页查询")
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     public R<Page<ProductDO>> list(PageModel page, ProductQuery query) {
+        query.setStatus(1);
         Page<ProductDO> pager = (Page<ProductDO>) productService.page(page, QueryUtil.buildWrapper(query, false));
         return Response.restResult(pager, ResultCode.SUCCESS);
     }

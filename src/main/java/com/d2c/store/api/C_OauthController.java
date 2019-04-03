@@ -1,5 +1,6 @@
 package com.d2c.store.api;
 
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.crypto.digest.DigestUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.api.R;
@@ -48,7 +49,7 @@ public class C_OauthController extends BaseController {
         String signature = DigestUtil.md5Hex(content + p2pDO.getSecret());
         Asserts.eq(sign, signature, "签名不正确，请仔细检查");
         MemberDO member = memberService.doOauth(oauthBean, p2pDO, RequestUtil.getRequestIp(request));
-        Date accessExpired = member.getAccountInfo().getDeadline();
+        Date accessExpired = DateUtil.offsetDay(new Date(), 7);
         String accessToken = SecurityConstant.TOKEN_PREFIX + Jwts.builder()
                 .setSubject(member.getAccount())
                 .claim(SecurityConstant.AUTHORITIES, member.getAccountInfo().getP2pId())
