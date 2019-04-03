@@ -54,7 +54,7 @@ public class C_MemberController extends BaseController {
         Asserts.notNull("appId不正确，请仔细检查", p2pDO);
         MemberDO member = memberService.findLogin(account, Long.valueOf(appId));
         Asserts.notNull("账户信息异常，请联系管理员", member);
-        Date accessExpired = DateUtil.offsetDay(new Date(), 7);
+        Date accessExpired = DateUtil.offsetDay(new Date(), 7).toJdkDate();
         String accessToken = SecurityConstant.TOKEN_PREFIX + Jwts.builder()
                 .setSubject(member.getAccount())
                 .claim(SecurityConstant.AUTHORITIES, member.getAccountInfo().getP2pId())

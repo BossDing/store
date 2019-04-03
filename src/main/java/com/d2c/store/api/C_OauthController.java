@@ -49,7 +49,7 @@ public class C_OauthController extends BaseController {
         String signature = DigestUtil.md5Hex(content + p2pDO.getSecret());
         Asserts.eq(sign, signature, "签名不正确，请仔细检查");
         MemberDO member = memberService.doOauth(oauthBean, p2pDO, RequestUtil.getRequestIp(request));
-        Date accessExpired = DateUtil.offsetDay(new Date(), 7);
+        Date accessExpired = DateUtil.offsetDay(new Date(), 7).toJdkDate();
         String accessToken = SecurityConstant.TOKEN_PREFIX + Jwts.builder()
                 .setSubject(member.getAccount())
                 .claim(SecurityConstant.AUTHORITIES, member.getAccountInfo().getP2pId())
