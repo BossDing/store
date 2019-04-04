@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -74,6 +75,7 @@ public class OrderServiceImpl extends BaseService<OrderMapper, OrderDO> implemen
         query.setP2pId(order.getP2pId());
         AccountDO account = new AccountDO();
         account.setOauthAmount(BigDecimal.ZERO);
+        account.setDeadline(new Date());
         accountService.update(account, QueryUtil.buildWrapper(query));
         redisTemplate.delete("MEMBER::session:" + order.getMemberAccount());
         ExecutorUtil.fixedPool.submit(() -> {

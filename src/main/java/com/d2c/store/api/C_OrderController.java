@@ -15,6 +15,8 @@ import com.d2c.store.common.api.ResultCode;
 import com.d2c.store.common.api.constant.PrefixConstant;
 import com.d2c.store.common.utils.QueryUtil;
 import com.d2c.store.common.utils.ReflectUtil;
+import com.d2c.store.modules.core.model.P2PDO;
+import com.d2c.store.modules.core.service.P2PService;
 import com.d2c.store.modules.member.model.AddressDO;
 import com.d2c.store.modules.member.model.MemberDO;
 import com.d2c.store.modules.member.service.AddressService;
@@ -52,6 +54,8 @@ import java.util.concurrent.TimeUnit;
 @RequestMapping("/api/order")
 public class C_OrderController extends BaseController {
 
+    @Autowired
+    private P2PService p2PService;
     @Autowired
     private OrderService orderService;
     @Autowired
@@ -120,6 +124,16 @@ public class C_OrderController extends BaseController {
             order.setOrderItemList(orderItemList);
             // 处理订单促销
             orderPromotionHandler.operator(order);
+            // 消费金额的验算
+            P2PDO p2p = p2PService.getById(member.getAccountInfo().getP2pId());
+            BigDecimal LimitAmountMax = member.getAccountInfo().getOauthAmount().add(p2p.getDiffAmount());
+            BigDecimal LimitAmountMin = member.getAccountInfo().getOauthAmount().subtract(p2p.getDiffAmount());
+            if (member.getAccountInfo().getOauthAmount().compareTo(p2p.getMinAmount()) >= 0) {
+                LimitAmountMin = p2p.getMinAmount().subtract(p2p.getDiffAmount());
+            }
+            if (order.getPayAmount().compareTo(LimitAmountMin) < 0 || order.getPayAmount().compareTo(LimitAmountMax) > 0) {
+                throw new ApiException("您本次消费金额必须在" + LimitAmountMin + "元到" + LimitAmountMax + "之间");
+            }
             // 创建订单
             order = orderService.doCreate(order);
             // 清空购物车
