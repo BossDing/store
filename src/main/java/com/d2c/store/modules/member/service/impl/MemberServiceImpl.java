@@ -135,7 +135,8 @@ public class MemberServiceImpl extends BaseService<MemberMapper, MemberDO> imple
     @CachePut(value = "MEMBER", key = "'session:'+#member.account", unless = "#result == null")
     public MemberDO doLogin(MemberDO member, String loginIp, String accessToken, Date accessExpired) {
         MemberDO entity = new MemberDO();
-        entity.setAccessToken(new BCryptPasswordEncoder().encode(accessToken));
+        accessToken = new BCryptPasswordEncoder().encode(accessToken);
+        entity.setAccessToken(accessToken);
         entity.setAccessExpired(accessExpired);
         entity.setLoginDate(new Date());
         entity.setLoginIp(loginIp);
@@ -143,6 +144,7 @@ public class MemberServiceImpl extends BaseService<MemberMapper, MemberDO> imple
         query.setAccount(member.getAccount());
         QueryWrapper wrapper = QueryUtil.buildWrapper(query);
         this.update(entity, wrapper);
+        member.setAccessToken(accessToken);
         member.setAccessExpired(accessExpired);
         member.setLoginDate(new Date());
         member.setLoginIp(loginIp);

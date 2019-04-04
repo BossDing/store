@@ -62,6 +62,7 @@ public class C_MemberController extends BaseController {
                 .signWith(SignatureAlgorithm.HS512, SecurityConstant.JWT_SIGN_KEY)
                 .compact();
         member = memberService.doLogin(member, RequestUtil.getRequestIp(request), accessToken, accessExpired);
+        member.setLoginToken(accessToken);
         return Response.restResult(member, ResultCode.SUCCESS);
     }
 
