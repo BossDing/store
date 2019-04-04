@@ -111,22 +111,22 @@ public class MemberServiceImpl extends BaseService<MemberMapper, MemberDO> imple
     // 覆盖授权额度
     private AccountDO coverAccount(AccountDO old, BigDecimal amount, Integer hours) {
         Date now = new Date();
-        if (old.getDeadline().after(now)) {
-            AccountDO entity = new AccountDO();
-            entity.setId(old.getId());
-            entity.setOauthAmount(amount);
-            entity.setDeadline(DateUtil.offsetHour(now, hours).toJdkDate());
-            accountService.updateById(entity);
-            // 发送延迟消息
-            ExecutorUtil.fixedPool.submit(() -> {
-                        accountDelayedSender.send(entity.getId().toString(), hours * 60 * 60L);
-                    }
-            );
-            old.setOauthAmount(amount);
-            old.setDeadline(entity.getDeadline());
-            old.setModifyDate(now);
+        if (old.getDeadline().after(now) && old.getOauthAmount().compareTo(BigDecimal.ZERO) == 0) {
             return old;
         }
+        AccountDO entity = new AccountDO();
+        entity.setId(old.getId());
+        entity.setOauthAmount(amount);
+        entity.setDeadline(DateUtil.offsetHour(now, hours).toJdkDate());
+        accountService.updateById(entity);
+        // 发送延迟消息
+        ExecutorUtil.fixedPool.submit(() -> {
+                    accountDelayedSender.send(entity.getId().toString(), hours * 60 * 60L);
+                }
+        );
+        old.setOauthAmount(amount);
+        old.setDeadline(entity.getDeadline());
+        old.setModifyDate(now);
         return old;
     }
 
