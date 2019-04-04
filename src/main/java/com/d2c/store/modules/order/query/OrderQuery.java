@@ -23,7 +23,7 @@ public class OrderQuery extends BaseQuery {
     @Condition(condition = ConditionEnum.EQ)
     @ApiModelProperty(value = "类型")
     private String type;
-    @Condition(condition = ConditionEnum.EQ)
+    @Condition(condition = ConditionEnum.IN)
     @ApiModelProperty(value = "状态")
     private String[] status;
 

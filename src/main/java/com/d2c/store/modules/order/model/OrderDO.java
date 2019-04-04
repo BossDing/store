@@ -49,6 +49,8 @@ public class OrderDO extends BaseDelDO implements IAddress {
     private String name;
     @ApiModelProperty(value = "手机")
     private String mobile;
+    @ApiModelProperty(value = "备注")
+    private String mark;
     @Assert(type = AssertEnum.NOT_NULL)
     @ApiModelProperty(value = "订单号")
     private String sn;
