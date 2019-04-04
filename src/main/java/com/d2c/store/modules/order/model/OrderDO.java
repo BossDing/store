@@ -116,9 +116,8 @@ public class OrderDO extends BaseDelDO implements IAddress {
 
     public enum StatusEnum {
         //
-        WAIT_MEM_SIGN("待用户签约"),
-        WAIT_P2P_SIGN("待P2P审核"),
-        WAIT_CUS_SIGN("待客服审核"),
+        WAIT_MEM_SIGN("待用户签约"), WAIT_P2P_SIGN("待P2P审核"), WAIT_CUS_SIGN("待客服审核"),
+        WAIT_DELIVER("待发货"), DELIVERED("已发货"),
         SUCCESS("交易成功"), CLOSED("交易关闭");
         //
         private String description;
