@@ -38,7 +38,7 @@ public class AccountDelayedReceiver {
         // 账户清零
         AccountDO account = new AccountDO();
         account.setId(Long.valueOf(msg));
-        account.setAmount(BigDecimal.ZERO);
+        account.setOauthAmount(BigDecimal.ZERO);
         accountService.updateById(account);
     }
 

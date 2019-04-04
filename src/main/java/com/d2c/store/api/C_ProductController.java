@@ -11,17 +11,12 @@ import com.d2c.store.common.api.PageModel;
 import com.d2c.store.common.api.Response;
 import com.d2c.store.common.api.ResultCode;
 import com.d2c.store.common.utils.QueryUtil;
-import com.d2c.store.modules.product.model.BrandDO;
-import com.d2c.store.modules.product.model.ProductDO;
-import com.d2c.store.modules.product.model.ProductDetailDO;
-import com.d2c.store.modules.product.model.ProductSkuDO;
+import com.d2c.store.modules.product.model.*;
+import com.d2c.store.modules.product.query.ProductCategoryQuery;
 import com.d2c.store.modules.product.query.ProductDetailQuery;
 import com.d2c.store.modules.product.query.ProductQuery;
 import com.d2c.store.modules.product.query.ProductSkuQuery;
-import com.d2c.store.modules.product.service.BrandService;
-import com.d2c.store.modules.product.service.ProductDetailService;
-import com.d2c.store.modules.product.service.ProductService;
-import com.d2c.store.modules.product.service.ProductSkuService;
+import com.d2c.store.modules.product.service.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,10 +46,28 @@ public class C_ProductController extends BaseController {
     private ProductSkuService productSkuService;
     @Autowired
     private ProductDetailService productDetailService;
+    @Autowired
+    private ProductCategoryService productCategoryService;
 
     @ApiOperation(value = "分页查询")
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     public R<Page<ProductDO>> list(PageModel page, ProductQuery query) {
+        // 品类参数
+        if (query.getCategoryId() != null) {
+            ProductCategoryDO pc = productCategoryService.getById(query.getCategoryId());
+            if (pc != null && pc.getParentId() == null) {
+                // 一级大类特殊处理
+                ProductCategoryQuery pcq = new ProductCategoryQuery();
+                pcq.setParentId(pc.getId());
+                List<ProductCategoryDO> children = productCategoryService.list(QueryUtil.buildWrapper(pcq));
+                List<Long> categoryIds = new ArrayList<>();
+                children.forEach(item -> categoryIds.add(item.getId()));
+                if (categoryIds.size() > 0) {
+                    query.setCategoryId(null);
+                    query.setCategoryIds(categoryIds.toArray(new Long[0]));
+                }
+            }
+        }
         query.setStatus(1);
         Page<ProductDO> pager = (Page<ProductDO>) productService.page(page, QueryUtil.buildWrapper(query, false));
         return Response.restResult(pager, ResultCode.SUCCESS);

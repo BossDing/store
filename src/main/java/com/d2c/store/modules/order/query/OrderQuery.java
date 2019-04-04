@@ -25,6 +25,6 @@ public class OrderQuery extends BaseQuery {
     private String type;
     @Condition(condition = ConditionEnum.EQ)
     @ApiModelProperty(value = "状态")
-    private String status;
+    private String[] status;
 
 }

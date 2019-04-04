@@ -73,7 +73,7 @@ public class OrderServiceImpl extends BaseService<OrderMapper, OrderDO> implemen
         query.setMemberId(order.getMemberId());
         query.setP2pId(order.getP2pId());
         AccountDO account = new AccountDO();
-        account.setAmount(BigDecimal.ZERO);
+        account.setOauthAmount(BigDecimal.ZERO);
         accountService.update(account, QueryUtil.buildWrapper(query));
         redisTemplate.delete("MEMBER::session:" + order.getMemberAccount());
         ExecutorUtil.fixedPool.submit(() -> {

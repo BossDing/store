@@ -97,7 +97,7 @@ public class MemberServiceImpl extends BaseService<MemberMapper, MemberDO> imple
         AccountDO entity = new AccountDO();
         entity.setMemberId(memberId);
         entity.setP2pId(p2pId);
-        entity.setAmount(amount);
+        entity.setOauthAmount(amount);
         entity.setDeadline(DateUtil.offsetHour(new Date(), hours).toJdkDate());
         accountService.save(entity);
         // 发送延迟消息
@@ -114,7 +114,7 @@ public class MemberServiceImpl extends BaseService<MemberMapper, MemberDO> imple
         if (old.getDeadline().after(now)) {
             AccountDO entity = new AccountDO();
             entity.setId(old.getId());
-            entity.setAmount(amount);
+            entity.setOauthAmount(amount);
             entity.setDeadline(DateUtil.offsetHour(now, hours).toJdkDate());
             accountService.updateById(entity);
             // 发送延迟消息
@@ -122,7 +122,7 @@ public class MemberServiceImpl extends BaseService<MemberMapper, MemberDO> imple
                         accountDelayedSender.send(entity.getId().toString(), hours * 60 * 60L);
                     }
             );
-            old.setAmount(amount);
+            old.setOauthAmount(amount);
             old.setDeadline(entity.getDeadline());
             old.setModifyDate(now);
             return old;
