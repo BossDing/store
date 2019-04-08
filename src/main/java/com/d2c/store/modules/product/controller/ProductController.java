@@ -1,7 +1,9 @@
 package com.d2c.store.modules.product.controller;
 
 import com.baomidou.mybatisplus.extension.api.R;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.d2c.store.common.api.Asserts;
+import com.d2c.store.common.api.PageModel;
 import com.d2c.store.common.api.Response;
 import com.d2c.store.common.api.ResultCode;
 import com.d2c.store.common.api.base.BaseCtrl;
@@ -12,6 +14,8 @@ import com.d2c.store.modules.product.query.ProductQuery;
 import com.d2c.store.modules.product.query.ProductSkuQuery;
 import com.d2c.store.modules.product.service.ProductService;
 import com.d2c.store.modules.product.service.ProductSkuService;
+import com.d2c.store.modules.security.model.UserDO;
+import com.d2c.store.modules.security.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,9 +32,19 @@ import java.util.List;
 public class ProductController extends BaseCtrl<ProductDO, ProductQuery> {
 
     @Autowired
+    private UserService userService;
+    @Autowired
     private ProductService productService;
     @Autowired
     private ProductSkuService productSkuService;
+
+    @ApiOperation(value = "P2P查询数据")
+    @RequestMapping(value = "/list", method = RequestMethod.POST)
+    public R<Page<ProductDO>> list(PageModel page, ProductQuery query) {
+        UserDO user = userService.findByUsername(loginUserHolder.getUsername());
+        Page<ProductDO> pager = (Page<ProductDO>) productService.findByQuery(user.getP2pId(), query, page);
+        return Response.restResult(pager, ResultCode.SUCCESS);
+    }
 
     @ApiOperation(value = "新增数据")
     @RequestMapping(value = "/insert", method = RequestMethod.POST)

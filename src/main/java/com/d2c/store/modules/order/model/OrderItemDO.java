@@ -81,15 +81,15 @@ public class OrderItemDO extends BaseDelDO implements ITradeItem {
     @ApiModelProperty(value = "实时单价")
     private BigDecimal realPrice;
     @Assert(type = AssertEnum.NOT_NULL)
+    @ApiModelProperty(value = "运费价格")
+    private BigDecimal freightAmount;
+    @Assert(type = AssertEnum.NOT_NULL)
     @ApiModelProperty(value = "实际支付")
     private BigDecimal payAmount;
     @ApiModelProperty(value = "物流公司")
     private String logisticsCom;
     @ApiModelProperty(value = "物流单号")
     private String logisticsNum;
-    @TableField(exist = false)
-    @ApiModelProperty(value = "运费公式")
-    private String freight;
     @TableField(exist = false)
     @ApiModelProperty(value = "类型名")
     private String typeName;
@@ -112,9 +112,9 @@ public class OrderItemDO extends BaseDelDO implements ITradeItem {
 
     public enum StatusEnum {
         //
-        WAIT_PAY("待付款"), PAID("已付款"), WAIT_DELIVER("待发货"),
-        DELIVERED("已发货"), RECEIVED("已收货"), SUCCESS("交易成功"),
-        WAIT_REFUND("待退款"), REFUNDED("已退款"), CLOSED("交易关闭");
+        WAIT_SIGN("签约中"), WAIT_DELIVER("待发货"),
+        DELIVERED("已发货"), RECEIVED("已收货"),
+        SUCCESS("交易成功"), CLOSED("交易关闭");
         //
         private String description;
 

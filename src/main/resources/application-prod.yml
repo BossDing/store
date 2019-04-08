@@ -20,6 +20,11 @@ spring:
     port: 6379
     timeout: 3000ms
 
+  rabbitmq:
+    addresses: 10.81.245.32
+    username: guest
+    password: ENC(PRpwXXJMcX+sAqWS0oKFEQ==)
+
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
     time-zone: GMT+8

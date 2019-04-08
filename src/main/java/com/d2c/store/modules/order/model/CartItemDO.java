@@ -59,6 +59,9 @@ public class CartItemDO extends BaseDO implements ITradeItem {
     @ApiModelProperty(value = "库存")
     private Integer stock;
     @TableField(exist = false)
+    @ApiModelProperty(value = "状态 1,0")
+    private Integer status;
+    @TableField(exist = false)
     @ApiModelProperty(value = "实时单价")
     private BigDecimal realPrice;
     @TableField(exist = false)

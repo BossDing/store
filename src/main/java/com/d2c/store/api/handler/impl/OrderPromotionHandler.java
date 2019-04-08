@@ -17,13 +17,16 @@ public class OrderPromotionHandler implements OrderHandler {
     public void operator(OrderDO order, Object... conditions) {
         // 商品活动和订单活动
         BigDecimal productAmount = BigDecimal.ZERO;
+        BigDecimal freightAmount = BigDecimal.ZERO;
         for (OrderItemDO orderItem : order.getOrderItemList()) {
             BigDecimal itemAmount = orderItem.getRealPrice().multiply(new BigDecimal(orderItem.getQuantity()));
             productAmount = productAmount.add(itemAmount);
-            orderItem.setPayAmount(itemAmount);
+            freightAmount = freightAmount.add(orderItem.getFreightAmount());
+            orderItem.setPayAmount(itemAmount.add(orderItem.getFreightAmount()));
         }
         order.setProductAmount(productAmount);
-        order.setPayAmount(productAmount);
+        order.setFreightAmount(freightAmount);
+        order.setPayAmount(productAmount.add(freightAmount));
     }
 
 }

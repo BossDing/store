@@ -4,6 +4,7 @@ import cn.hutool.core.date.DateUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.d2c.store.api.support.OauthBean;
 import com.d2c.store.common.api.base.BaseService;
+import com.d2c.store.common.utils.ExecutorUtil;
 import com.d2c.store.common.utils.QueryUtil;
 import com.d2c.store.modules.core.model.P2PDO;
 import com.d2c.store.modules.member.mapper.MemberMapper;
@@ -13,6 +14,7 @@ import com.d2c.store.modules.member.query.AccountQuery;
 import com.d2c.store.modules.member.query.MemberQuery;
 import com.d2c.store.modules.member.service.AccountService;
 import com.d2c.store.modules.member.service.MemberService;
+import com.d2c.store.rabbitmq.sender.AccountDelayedSender;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
@@ -37,6 +39,8 @@ public class MemberServiceImpl extends BaseService<MemberMapper, MemberDO> imple
     private AccountService accountService;
     @Autowired
     private RedisTemplate redisTemplate;
+    @Autowired
+    private AccountDelayedSender accountDelayedSender;
 
     @Override
     @Cacheable(value = "MEMBER", key = "'session:'+#account", unless = "#result == null")
@@ -93,26 +97,36 @@ public class MemberServiceImpl extends BaseService<MemberMapper, MemberDO> imple
         AccountDO entity = new AccountDO();
         entity.setMemberId(memberId);
         entity.setP2pId(p2pId);
-        entity.setAmount(amount);
+        entity.setOauthAmount(amount);
         entity.setDeadline(DateUtil.offsetHour(new Date(), hours).toJdkDate());
         accountService.save(entity);
+        // 发送延迟消息
+        ExecutorUtil.fixedPool.submit(() -> {
+                    accountDelayedSender.send(entity.getId().toString(), hours * 60 * 60L);
+                }
+        );
         return entity;
     }
 
     // 覆盖授权额度
     private AccountDO coverAccount(AccountDO old, BigDecimal amount, Integer hours) {
         Date now = new Date();
-        if (old.getDeadline().after(now)) {
-            AccountDO entity = new AccountDO();
-            entity.setId(old.getId());
-            entity.setAmount(amount);
-            entity.setDeadline(DateUtil.offsetHour(now, hours).toJdkDate());
-            accountService.updateById(entity);
-            old.setAmount(amount);
-            old.setDeadline(entity.getDeadline());
-            old.setModifyDate(now);
+        if (old.getDeadline().after(now) && old.getOauthAmount().compareTo(BigDecimal.ZERO) == 0) {
             return old;
         }
+        AccountDO entity = new AccountDO();
+        entity.setId(old.getId());
+        entity.setOauthAmount(amount);
+        entity.setDeadline(DateUtil.offsetHour(now, hours).toJdkDate());
+        accountService.updateById(entity);
+        // 发送延迟消息
+        ExecutorUtil.fixedPool.submit(() -> {
+                    accountDelayedSender.send(entity.getId().toString(), hours * 60 * 60L);
+                }
+        );
+        old.setOauthAmount(amount);
+        old.setDeadline(entity.getDeadline());
+        old.setModifyDate(now);
         return old;
     }
 
@@ -121,7 +135,8 @@ public class MemberServiceImpl extends BaseService<MemberMapper, MemberDO> imple
     @CachePut(value = "MEMBER", key = "'session:'+#member.account", unless = "#result == null")
     public MemberDO doLogin(MemberDO member, String loginIp, String accessToken, Date accessExpired) {
         MemberDO entity = new MemberDO();
-        entity.setAccessToken(new BCryptPasswordEncoder().encode(accessToken));
+        accessToken = new BCryptPasswordEncoder().encode(accessToken);
+        entity.setAccessToken(accessToken);
         entity.setAccessExpired(accessExpired);
         entity.setLoginDate(new Date());
         entity.setLoginIp(loginIp);
@@ -129,6 +144,7 @@ public class MemberServiceImpl extends BaseService<MemberMapper, MemberDO> imple
         query.setAccount(member.getAccount());
         QueryWrapper wrapper = QueryUtil.buildWrapper(query);
         this.update(entity, wrapper);
+        member.setAccessToken(accessToken);
         member.setAccessExpired(accessExpired);
         member.setLoginDate(new Date());
         member.setLoginIp(loginIp);

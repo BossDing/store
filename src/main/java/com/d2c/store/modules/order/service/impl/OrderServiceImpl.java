@@ -2,7 +2,11 @@ package com.d2c.store.modules.order.service.impl;
 
 import com.baomidou.mybatisplus.extension.exceptions.ApiException;
 import com.d2c.store.common.api.base.BaseService;
+import com.d2c.store.common.utils.ExecutorUtil;
 import com.d2c.store.common.utils.QueryUtil;
+import com.d2c.store.modules.member.model.AccountDO;
+import com.d2c.store.modules.member.query.AccountQuery;
+import com.d2c.store.modules.member.service.AccountService;
 import com.d2c.store.modules.order.mapper.OrderMapper;
 import com.d2c.store.modules.order.model.OrderDO;
 import com.d2c.store.modules.order.model.OrderItemDO;
@@ -10,11 +14,14 @@ import com.d2c.store.modules.order.query.OrderItemQuery;
 import com.d2c.store.modules.order.query.OrderQuery;
 import com.d2c.store.modules.order.service.OrderItemService;
 import com.d2c.store.modules.order.service.OrderService;
+import com.d2c.store.modules.product.service.ProductService;
 import com.d2c.store.modules.product.service.ProductSkuService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -27,6 +34,12 @@ public class OrderServiceImpl extends BaseService<OrderMapper, OrderDO> implemen
     private OrderItemService orderItemService;
     @Autowired
     private ProductSkuService productSkuService;
+    @Autowired
+    private ProductService productService;
+    @Autowired
+    private AccountService accountService;
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     @Override
     @Transactional
@@ -55,6 +68,21 @@ public class OrderServiceImpl extends BaseService<OrderMapper, OrderDO> implemen
             orderItem.setType(order.getType());
             orderItemService.save(orderItem);
         }
+        // 账户清零
+        AccountQuery query = new AccountQuery();
+        query.setMemberId(order.getMemberId());
+        query.setP2pId(order.getP2pId());
+        AccountDO account = new AccountDO();
+        account.setOauthAmount(BigDecimal.ZERO);
+        accountService.update(account, QueryUtil.buildWrapper(query));
+        redisTemplate.delete("MEMBER::session:" + order.getMemberAccount());
+        ExecutorUtil.fixedPool.submit(() -> {
+                    for (OrderItemDO orderItem : orderItemList) {
+                        // 商品销量统计
+                        productService.doUpdateSales(orderItem.getProductId(), orderItem.getQuantity());
+                    }
+                }
+        );
         return order;
     }
 
@@ -78,6 +106,13 @@ public class OrderServiceImpl extends BaseService<OrderMapper, OrderDO> implemen
             // 返还库存
             productSkuService.doReturnStock(orderItem.getProductSkuId(), orderItem.getProductId(), orderItem.getQuantity());
         }
+        ExecutorUtil.fixedPool.submit(() -> {
+                    for (OrderItemDO orderItem : orderItemList) {
+                        // 商品销量统计
+                        productService.doUpdateSales(orderItem.getProductId(), orderItem.getQuantity() * -1);
+                    }
+                }
+        );
         return success;
     }
 

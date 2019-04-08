@@ -49,6 +49,8 @@ public class OrderDO extends BaseDelDO implements IAddress {
     private String name;
     @ApiModelProperty(value = "手机")
     private String mobile;
+    @ApiModelProperty(value = "备注")
+    private String mark;
     @Assert(type = AssertEnum.NOT_NULL)
     @ApiModelProperty(value = "订单号")
     private String sn;
@@ -61,6 +63,9 @@ public class OrderDO extends BaseDelDO implements IAddress {
     @Assert(type = AssertEnum.NOT_NULL)
     @ApiModelProperty(value = "商品总价")
     private BigDecimal productAmount;
+    @Assert(type = AssertEnum.NOT_NULL)
+    @ApiModelProperty(value = "运费价格")
+    private BigDecimal freightAmount;
     @Assert(type = AssertEnum.NOT_NULL)
     @ApiModelProperty(value = "实际支付")
     private BigDecimal payAmount;
@@ -111,7 +116,8 @@ public class OrderDO extends BaseDelDO implements IAddress {
 
     public enum StatusEnum {
         //
-        WAIT_PAY("待付款"), PAID("已付款"),
+        WAIT_MEM_SIGN("待用户签约"), WAIT_P2P_SIGN("待P2P审核"), WAIT_CUS_SIGN("待客服审核"),
+        WAIT_DELIVER("待发货"), DELIVERED("已发货"),
         SUCCESS("交易成功"), CLOSED("交易关闭");
         //
         private String description;

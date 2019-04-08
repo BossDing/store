@@ -21,4 +21,6 @@ public interface ProductService extends IService<ProductDO> {
 
     Page<ProductDO> findByQuery(Long p2pId, ProductQuery query, PageModel page);
 
+    int doUpdateSales(Long id, Integer quantity);
+
 }

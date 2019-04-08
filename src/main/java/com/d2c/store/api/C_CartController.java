@@ -63,6 +63,7 @@ public class C_CartController extends BaseController {
                 map.get(productSku.getId()).setRealPrice(productSku.getSellPrice());
                 map.get(productSku.getId()).setStock(productSku.getStock());
                 map.get(productSku.getId()).setFreight(productSku.getFreight());
+                map.get(productSku.getId()).setStatus(productSku.getStatus());
             }
         }
         return Response.restResult(list, ResultCode.SUCCESS);

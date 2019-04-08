@@ -32,7 +32,7 @@ public class AccountDO extends BaseDelDO {
     private Long memberId;
     @Assert(type = AssertEnum.NOT_NULL)
     @ApiModelProperty(value = "授权金额")
-    private BigDecimal amount;
+    private BigDecimal oauthAmount;
     @Assert(type = AssertEnum.NOT_NULL)
     @ApiModelProperty(value = "过期时间")
     private Date deadline;

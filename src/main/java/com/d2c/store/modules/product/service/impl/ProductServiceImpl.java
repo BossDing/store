@@ -34,11 +34,13 @@ public class ProductServiceImpl extends BaseService<ProductMapper, ProductDO> im
     @Transactional
     public ProductDO doCreate(ProductDO product) {
         this.initStock(product);
+        product.setSales(0);
         this.save(product);
         for (ProductSkuDO sku : product.getSkuList()) {
             sku.setProductId(product.getId());
             sku.setBrandId(product.getBrandId());
             sku.setSupplierId(product.getSupplierId());
+            sku.setStatus(product.getStatus());
             sku.setFreight(product.getFreight());
             productSkuService.save(sku);
         }
@@ -49,6 +51,7 @@ public class ProductServiceImpl extends BaseService<ProductMapper, ProductDO> im
     @Transactional
     public boolean doUpdate(ProductDO product) {
         this.initStock(product);
+        product.setSales(null);
         ProductSkuQuery query = new ProductSkuQuery();
         query.setProductId(product.getId());
         List<ProductSkuDO> oldList = productSkuService.list(QueryUtil.buildWrapper(query));
@@ -60,6 +63,7 @@ public class ProductServiceImpl extends BaseService<ProductMapper, ProductDO> im
                 sku.setProductId(product.getId());
                 sku.setBrandId(product.getBrandId());
                 sku.setSupplierId(product.getSupplierId());
+                sku.setStatus(product.getStatus());
                 sku.setFreight(product.getFreight());
                 productSkuService.updateById(sku);
                 oldMap.remove(sku.getId());
@@ -68,6 +72,7 @@ public class ProductServiceImpl extends BaseService<ProductMapper, ProductDO> im
                 sku.setProductId(product.getId());
                 sku.setBrandId(product.getBrandId());
                 sku.setSupplierId(product.getSupplierId());
+                sku.setStatus(product.getStatus());
                 sku.setFreight(product.getFreight());
                 productSkuService.save(sku);
             }
@@ -112,6 +117,11 @@ public class ProductServiceImpl extends BaseService<ProductMapper, ProductDO> im
             pager.setRecords(list);
         }
         return pager;
+    }
+
+    @Override
+    public int doUpdateSales(Long id, Integer quantity) {
+        return productMapper.doUpdateSales(id, quantity);
     }
 
 }

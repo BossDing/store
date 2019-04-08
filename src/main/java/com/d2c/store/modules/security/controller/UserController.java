@@ -17,6 +17,7 @@ import com.d2c.store.modules.security.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -33,6 +34,8 @@ public class UserController extends BaseExcelCtrl<UserDO, UserQuery> {
     private UserService userService;
     @Autowired
     private UserRoleService userRoleService;
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     @ApiOperation(value = "登录过期")
     @RequestMapping(value = "/expired", method = RequestMethod.GET)
@@ -58,9 +61,12 @@ public class UserController extends BaseExcelCtrl<UserDO, UserQuery> {
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     public R<UserDO> update(@RequestBody UserDO user) {
         Asserts.notNull(ResultCode.REQUEST_PARAM_NULL, user);
+        UserDO old = userService.getById(user.getId());
         UserDO entity = new UserDO();
         entity.setId(user.getId());
         entity.setStatus(user.getStatus());
+        entity.setP2pId(user.getP2pId());
+        redisTemplate.delete("USER::session:" + old.getUsername());
         return super.update(entity);
     }
 

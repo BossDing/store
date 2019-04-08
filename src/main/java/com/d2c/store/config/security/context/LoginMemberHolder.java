@@ -11,7 +11,6 @@ import com.d2c.store.modules.member.service.MemberService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 
@@ -25,8 +24,6 @@ public class LoginMemberHolder {
 
     @Autowired
     private HttpServletRequest request;
-    @Autowired
-    private RedisTemplate redisTemplate;
 
     public MemberDO getLoginMember() {
         String accessToken = request.getHeader(SecurityConstant.ACCESS_TOKEN);

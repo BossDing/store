@@ -15,6 +15,8 @@ import com.d2c.store.common.api.ResultCode;
 import com.d2c.store.common.api.constant.PrefixConstant;
 import com.d2c.store.common.utils.QueryUtil;
 import com.d2c.store.common.utils.ReflectUtil;
+import com.d2c.store.modules.core.model.P2PDO;
+import com.d2c.store.modules.core.service.P2PService;
 import com.d2c.store.modules.member.model.AddressDO;
 import com.d2c.store.modules.member.model.MemberDO;
 import com.d2c.store.modules.member.service.AddressService;
@@ -26,6 +28,7 @@ import com.d2c.store.modules.order.query.OrderQuery;
 import com.d2c.store.modules.order.service.CartItemService;
 import com.d2c.store.modules.order.service.OrderItemService;
 import com.d2c.store.modules.order.service.OrderService;
+import com.d2c.store.modules.product.model.FreightDO;
 import com.d2c.store.modules.product.model.ProductDO;
 import com.d2c.store.modules.product.model.ProductSkuDO;
 import com.d2c.store.modules.product.service.ProductService;
@@ -51,6 +54,8 @@ import java.util.concurrent.TimeUnit;
 @RequestMapping("/api/order")
 public class C_OrderController extends BaseController {
 
+    @Autowired
+    private P2PService p2PService;
     @Autowired
     private OrderService orderService;
     @Autowired
@@ -119,6 +124,16 @@ public class C_OrderController extends BaseController {
             order.setOrderItemList(orderItemList);
             // 处理订单促销
             orderPromotionHandler.operator(order);
+            // 消费金额的验算
+            P2PDO p2p = p2PService.getById(member.getAccountInfo().getP2pId());
+            BigDecimal LimitAmountMax = member.getAccountInfo().getOauthAmount().add(p2p.getDiffAmount());
+            BigDecimal LimitAmountMin = member.getAccountInfo().getOauthAmount().subtract(p2p.getDiffAmount());
+            if (member.getAccountInfo().getOauthAmount().compareTo(p2p.getMinAmount()) >= 0) {
+                LimitAmountMin = p2p.getMinAmount().subtract(p2p.getDiffAmount());
+            }
+            if (order.getPayAmount().compareTo(LimitAmountMin) < 0 || order.getPayAmount().compareTo(LimitAmountMax) > 0) {
+                throw new ApiException("您本次消费金额必须在" + LimitAmountMin + "元到" + LimitAmountMax + "之间");
+            }
             // 创建订单
             order = orderService.doCreate(order);
             // 清空购物车
@@ -137,7 +152,7 @@ public class C_OrderController extends BaseController {
         order.setMemberAccount(member.getAccount());
         order.setP2pId(member.getAccountInfo().getP2pId());
         order.setType(OrderDO.TypeEnum.NORMAL.name());
-        order.setStatus(OrderDO.StatusEnum.WAIT_PAY.name());
+        order.setStatus(OrderDO.StatusEnum.WAIT_MEM_SIGN.name());
         order.setProductAmount(BigDecimal.ZERO);
         order.setPayAmount(BigDecimal.ZERO);
         return order;
@@ -150,7 +165,7 @@ public class C_OrderController extends BaseController {
         order.setSn(PrefixConstant.ORDER_PREFIX + String.valueOf(snowFlake.nextId()));
         order.setP2pId(member.getAccountInfo().getP2pId());
         order.setType(OrderDO.TypeEnum.NORMAL.name());
-        order.setStatus(OrderDO.StatusEnum.WAIT_PAY.name());
+        order.setStatus(OrderDO.StatusEnum.WAIT_MEM_SIGN.name());
         order.setProductAmount(BigDecimal.ZERO);
         order.setPayAmount(BigDecimal.ZERO);
         return order;
@@ -231,12 +246,12 @@ public class C_OrderController extends BaseController {
 
     private void buildOrderItem(ProductSkuDO sku, OrderItemDO orderItem) {
         orderItem.setType(OrderDO.TypeEnum.NORMAL.name());
-        orderItem.setStatus(OrderItemDO.StatusEnum.WAIT_PAY.name());
+        orderItem.setStatus(OrderItemDO.StatusEnum.WAIT_SIGN.name());
         orderItem.setBrandId(sku.getBrandId());
         orderItem.setSupplierId(sku.getSupplierId());
         orderItem.setProductPrice(sku.getSellPrice());
         orderItem.setRealPrice(sku.getSellPrice());
-        orderItem.setFreight(sku.getFreight());
+        orderItem.setFreightAmount(FreightDO.calculate(orderItem.getQuantity(), sku.getFreight()));
         orderItem.setPayAmount(BigDecimal.ZERO);
     }
 
@@ -280,7 +295,7 @@ public class C_OrderController extends BaseController {
     public R cancel(Long id) {
         OrderDO order = orderService.getById(id);
         Asserts.notNull(ResultCode.RESPONSE_DATA_NULL, order);
-        Asserts.eq(order.getStatus(), OrderDO.StatusEnum.WAIT_PAY.name(), "订单状态异常");
+        Asserts.eq(order.getStatus(), OrderDO.StatusEnum.WAIT_MEM_SIGN.name(), "订单状态异常");
         MemberDO member = loginMemberHolder.getLoginMember();
         Asserts.eq(order.getMemberId(), member.getId(), "订单不属于本人");
         OrderItemQuery itemQuery = new OrderItemQuery();
