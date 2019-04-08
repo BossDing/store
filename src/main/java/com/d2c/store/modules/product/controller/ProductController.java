@@ -1,17 +1,18 @@
 package com.d2c.store.modules.product.controller;
 
 import com.baomidou.mybatisplus.extension.api.R;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.d2c.store.common.api.Asserts;
-import com.d2c.store.common.api.PageModel;
 import com.d2c.store.common.api.Response;
 import com.d2c.store.common.api.ResultCode;
 import com.d2c.store.common.api.base.BaseCtrl;
 import com.d2c.store.common.utils.QueryUtil;
+import com.d2c.store.modules.product.model.P2PProductDO;
 import com.d2c.store.modules.product.model.ProductDO;
 import com.d2c.store.modules.product.model.ProductSkuDO;
+import com.d2c.store.modules.product.query.P2PProductQuery;
 import com.d2c.store.modules.product.query.ProductQuery;
 import com.d2c.store.modules.product.query.ProductSkuQuery;
+import com.d2c.store.modules.product.service.P2PProductService;
 import com.d2c.store.modules.product.service.ProductService;
 import com.d2c.store.modules.product.service.ProductSkuService;
 import com.d2c.store.modules.security.model.UserDO;
@@ -37,13 +38,18 @@ public class ProductController extends BaseCtrl<ProductDO, ProductQuery> {
     private ProductService productService;
     @Autowired
     private ProductSkuService productSkuService;
+    @Autowired
+    private P2PProductService p2PProductService;
 
     @ApiOperation(value = "P2P查询数据")
     @RequestMapping(value = "/list", method = RequestMethod.POST)
-    public R<Page<ProductDO>> list(PageModel page, ProductQuery query) {
+    public R<List<P2PProductDO>> list(Long[] productIds) {
         UserDO user = userService.findByUsername(loginUserHolder.getUsername());
-        Page<ProductDO> pager = (Page<ProductDO>) productService.findByQuery(user.getP2pId(), query, page);
-        return Response.restResult(pager, ResultCode.SUCCESS);
+        P2PProductQuery query = new P2PProductQuery();
+        query.setP2pId(user.getP2pId());
+        query.setProductId(productIds);
+        List<P2PProductDO> list = p2PProductService.list(QueryUtil.buildWrapper(query));
+        return Response.restResult(list, ResultCode.SUCCESS);
     }
 
     @ApiOperation(value = "新增数据")

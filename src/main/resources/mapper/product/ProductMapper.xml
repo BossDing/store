@@ -23,7 +23,9 @@
         <if test="query.categoryId != null">
             AND p.category_id = #{query.categoryId}
         </if>
-        ORDER BY p.create_date DESC
+        <if test="sort != null">
+            ORDER BY ${sort}
+        </if>
         LIMIT #{offset}, #{size}
     </select>
 

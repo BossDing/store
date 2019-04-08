@@ -69,6 +69,8 @@ public class OrderDO extends BaseDelDO implements IAddress {
     @Assert(type = AssertEnum.NOT_NULL)
     @ApiModelProperty(value = "实际支付")
     private BigDecimal payAmount;
+    @ApiModelProperty(value = "合同编号")
+    private String contractId;
     @TableField(exist = false)
     @ApiModelProperty(value = "类型名")
     private String typeName;
@@ -78,8 +80,6 @@ public class OrderDO extends BaseDelDO implements IAddress {
     @TableField(exist = false)
     @ApiModelProperty(value = "订单明细列表")
     private List<OrderItemDO> orderItemList = new ArrayList<>();
-    @ApiModelProperty(value = "合同编号")
-    private String contractId;
 
     public String getTypeName() {
         if (StrUtil.isBlank(type)) return "";
