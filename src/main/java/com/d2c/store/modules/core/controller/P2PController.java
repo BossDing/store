@@ -8,7 +8,7 @@ import com.d2c.store.common.api.Response;
 import com.d2c.store.common.api.ResultCode;
 import com.d2c.store.common.api.base.BaseCtrl;
 import com.d2c.store.common.api.constant.PrefixConstant;
-import com.d2c.store.common.fadada.FadadaClient;
+import com.d2c.store.common.sdk.fadada.FadadaClient;
 import com.d2c.store.common.utils.QueryUtil;
 import com.d2c.store.modules.core.model.P2PDO;
 import com.d2c.store.modules.core.query.P2PQuery;
@@ -33,6 +33,8 @@ public class P2PController extends BaseCtrl<P2PDO, P2PQuery> {
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private FadadaClient fadadaClient;
 
     @ApiOperation(value = "P2P查询数据")
     @RequestMapping(value = "/list", method = RequestMethod.POST)
@@ -64,16 +66,22 @@ public class P2PController extends BaseCtrl<P2PDO, P2PQuery> {
         memberDO.setIdentity(p2PDO.getIdentity());
         memberDO.setMobile(p2PDO.getMobile());
         String legalCustomerId = FadadaClient.registerAccount(PrefixConstant.FDD_LEGAL_ACCOUNT_PREFIX + id, "1");
+        String applyNum = PrefixConstant.FDD_APPLYNUM_PREFIX + id;
+        String legalCustomerId = fadadaClient.registerAccount(id, "1");
         p2PDO.setLegalCustomerId(legalCustomerId);
         //企业注册
         String customerId = FadadaClient.registerAccount(PrefixConstant.FDD_COM_ACCOUNT_PREFIX + id, "2");
+        String customerId = fadadaClient.registerAccount(id, "2");
         p2PDO.setCustomerId(customerId);
         //企业认证
         String evidenceNo = FadadaClient.companyDeposit(p2PDO, PrefixConstant.FDD_TRANSATION_PREFIX + id, PrefixConstant.FDD_COM_APPLY_PREFIX + id);
+        String evidenceNo = fadadaClient.companyDeposit(p2PDO, PrefixConstant.FDD_TRANSATION_PREFIX + id, PrefixConstant.FDD_APPLYNUM_PREFIX + id);
         p2PDO.setEvidenceNo(evidenceNo);
         //证书申请
         FadadaClient.applyClinetNumcert(customerId, evidenceNo);
         service.updateById(p2PDO);
+        fadadaClient.applyClinetNumcert(customerId, evidenceNo);
+        this.service.updateById(p2PDO);
         return Response.restResult(p2PDO, ResultCode.SUCCESS);
     }
 
