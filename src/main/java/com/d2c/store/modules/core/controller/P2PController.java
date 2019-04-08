@@ -60,20 +60,20 @@ public class P2PController extends BaseCtrl<P2PDO, P2PQuery> {
     public R<P2PDO> apply(String id) {
         P2PDO p2PDO = this.service.getById(Long.valueOf(id));
         Asserts.notNull("企业资料不全", p2PDO.getName(), p2PDO.getCreditCode(), p2PDO.getCreditCodeFile(), p2PDO.getPowerAttorneyFile(), p2PDO.getLegalName(), p2PDO.getIdentity(), p2PDO.getMobile());
-        //法人注册
+        // 法人注册
         MemberDO memberDO = new MemberDO();
         memberDO.setNickname(p2PDO.getLegalName());
         memberDO.setIdentity(p2PDO.getIdentity());
         memberDO.setAccount(p2PDO.getMobile());
         String legalCustomerId = fadadaClient.registerAccount(PrefixConstant.FDD_LEGAL_ACCOUNT_PREFIX + id, "1");
         p2PDO.setLegalCustomerId(legalCustomerId);
-        //企业注册
+        // 企业注册
         String customerId = fadadaClient.registerAccount(PrefixConstant.FDD_COM_ACCOUNT_PREFIX + id, "2");
         p2PDO.setCustomerId(customerId);
-        //企业认证
+        // 企业认证
         String evidenceNo = fadadaClient.companyDeposit(p2PDO, PrefixConstant.FDD_TRANSATION_PREFIX + id, PrefixConstant.FDD_COM_APPLY_PREFIX + id);
         p2PDO.setEvidenceNo(evidenceNo);
-        //证书申请
+        // 证书申请
         fadadaClient.applyClinetNumcert(customerId, evidenceNo);
         service.updateById(p2PDO);
         return Response.restResult(p2PDO, ResultCode.SUCCESS);

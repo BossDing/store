@@ -41,9 +41,9 @@ public class ShopApplicationTests {
          */
         MemberDO memberDO = new MemberDO();
         memberDO.setCustomerId("15CBE6F987621E865C6A194A16C6770E");
-        memberDO.setName("路人甲");
+        memberDO.setNickname("路人甲");
         memberDO.setIdentity("330327199001012222");
-        memberDO.setMobile("13197677777");
+        memberDO.setAccount("13197677777");
         List<OrderItemDO> list = new ArrayList<>();
         OrderItemDO oi1 = new OrderItemDO();
         oi1.setProductName("商品1");
