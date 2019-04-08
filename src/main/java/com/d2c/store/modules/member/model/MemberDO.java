@@ -34,12 +34,8 @@ public class MemberDO extends BaseDelDO implements IMember {
     private String nickname;
     @ApiModelProperty(value = "头像")
     private String avatar;
-    @ApiModelProperty(value = "用户真实姓名")
-    private String name;
     @ApiModelProperty(value = "身份证")
     private String identity;
-    @ApiModelProperty(value = "联系方式")
-    private String mobile;
     @ApiModelProperty(value = "令牌")
     private String accessToken;
     @ApiModelProperty(value = "令牌时效")
@@ -66,8 +62,6 @@ public class MemberDO extends BaseDelDO implements IMember {
     private String customerId;
     @ApiModelProperty(value = "个人存证编号")
     private String evidenceNo;
-    @ApiModelProperty(value = "签章图片")
-    private String signId;
 
     @JsonIgnore
     public String getPassword() {
