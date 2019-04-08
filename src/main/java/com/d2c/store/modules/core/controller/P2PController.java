@@ -8,7 +8,7 @@ import com.d2c.store.common.api.Response;
 import com.d2c.store.common.api.ResultCode;
 import com.d2c.store.common.api.base.BaseCtrl;
 import com.d2c.store.common.api.constant.PrefixConstant;
-import com.d2c.store.common.sdk.fadada.FadadaClient;
+import com.d2c.store.common.fadada.FadadaClient;
 import com.d2c.store.common.utils.QueryUtil;
 import com.d2c.store.modules.core.model.P2PDO;
 import com.d2c.store.modules.core.query.P2PQuery;
@@ -65,23 +65,17 @@ public class P2PController extends BaseCtrl<P2PDO, P2PQuery> {
         memberDO.setName(p2PDO.getLegalName());
         memberDO.setIdentity(p2PDO.getIdentity());
         memberDO.setMobile(p2PDO.getMobile());
-        String legalCustomerId = FadadaClient.registerAccount(PrefixConstant.FDD_LEGAL_ACCOUNT_PREFIX + id, "1");
-        String applyNum = PrefixConstant.FDD_APPLYNUM_PREFIX + id;
-        String legalCustomerId = fadadaClient.registerAccount(id, "1");
+        String legalCustomerId = fadadaClient.registerAccount(PrefixConstant.FDD_LEGAL_ACCOUNT_PREFIX + id, "1");
         p2PDO.setLegalCustomerId(legalCustomerId);
         //企业注册
-        String customerId = FadadaClient.registerAccount(PrefixConstant.FDD_COM_ACCOUNT_PREFIX + id, "2");
-        String customerId = fadadaClient.registerAccount(id, "2");
+        String customerId = fadadaClient.registerAccount(PrefixConstant.FDD_COM_ACCOUNT_PREFIX + id, "2");
         p2PDO.setCustomerId(customerId);
         //企业认证
-        String evidenceNo = FadadaClient.companyDeposit(p2PDO, PrefixConstant.FDD_TRANSATION_PREFIX + id, PrefixConstant.FDD_COM_APPLY_PREFIX + id);
-        String evidenceNo = fadadaClient.companyDeposit(p2PDO, PrefixConstant.FDD_TRANSATION_PREFIX + id, PrefixConstant.FDD_APPLYNUM_PREFIX + id);
+        String evidenceNo = fadadaClient.companyDeposit(p2PDO, PrefixConstant.FDD_TRANSATION_PREFIX + id, PrefixConstant.FDD_COM_APPLY_PREFIX + id);
         p2PDO.setEvidenceNo(evidenceNo);
         //证书申请
-        FadadaClient.applyClinetNumcert(customerId, evidenceNo);
-        service.updateById(p2PDO);
         fadadaClient.applyClinetNumcert(customerId, evidenceNo);
-        this.service.updateById(p2PDO);
+        service.updateById(p2PDO);
         return Response.restResult(p2PDO, ResultCode.SUCCESS);
     }
 
@@ -90,8 +84,8 @@ public class P2PController extends BaseCtrl<P2PDO, P2PQuery> {
     public R<P2PDO> getSign(String id) {
         P2PDO p2pDO = this.service.getById(Long.valueOf(id));
         Asserts.isNull("尚未进行企业认证", p2pDO.getCustomerId(), p2pDO.getName());
-        String signImg = FadadaClient.customSignature(p2pDO.getCustomerId(), p2pDO.getName());
-        String signId = FadadaClient.addSignature(p2pDO.getCustomerId(), signImg);
+        String signImg = fadadaClient.customSignature(p2pDO.getCustomerId(), p2pDO.getName());
+        String signId = fadadaClient.addSignature(p2pDO.getCustomerId(), signImg);
         p2pDO.setSignId(signId);
         service.updateById(p2pDO);
         return Response.restResult(p2pDO, ResultCode.SUCCESS);

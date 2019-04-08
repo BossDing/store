@@ -6,6 +6,8 @@ import com.d2c.store.api.base.BaseController;
 import com.d2c.store.common.api.Asserts;
 import com.d2c.store.common.api.Response;
 import com.d2c.store.common.api.ResultCode;
+import com.d2c.store.common.api.constant.PrefixConstant;
+import com.d2c.store.common.fadada.FadadaClient;
 import com.d2c.store.common.utils.RequestUtil;
 import com.d2c.store.config.security.constant.SecurityConstant;
 import com.d2c.store.modules.core.model.P2PDO;
@@ -38,6 +40,8 @@ public class C_MemberController extends BaseController {
     private SmsService smsService;
     @Autowired
     private MemberService memberService;
+    @Autowired
+    private FadadaClient fadadaClient;
 
     @ApiOperation(value = "登录信息")
     @RequestMapping(value = "/info", method = RequestMethod.GET)
@@ -64,6 +68,29 @@ public class C_MemberController extends BaseController {
         member = memberService.doLogin(member, RequestUtil.getRequestIp(request), accessToken, accessExpired);
         member.setLoginToken(accessToken);
         return Response.restResult(member, ResultCode.SUCCESS);
+    }
+
+    @ApiOperation(value = "更新")
+    @RequestMapping(value = "/update", method = RequestMethod.POST)
+    public R update(MemberDO memberDO) {
+        if (memberDO.getId() == null) {
+            memberDO.setId(loginMemberHolder.getLoginMember().getId());
+        }
+        memberService.updateById(memberDO);
+        return Response.restResult(null, ResultCode.SUCCESS);
+    }
+
+    @ApiOperation(value = "法大大认证")
+    @RequestMapping(value = "/fadada/apply", method = RequestMethod.POST)
+    public R fadadaApply() {
+        MemberDO memberDO = loginMemberHolder.getLoginMember();
+        Asserts.isNull("请先维护个人信息，真实姓名，手机，身份证不能为空", memberDO.getName(), memberDO.getIdentity(), memberDO.getMobile());
+        String customerId = fadadaClient.registerAccount(PrefixConstant.FDD_PERSON_ACCOUNT_PREFIX + memberDO.getId(), "1");
+        memberDO.setCustomerId(customerId);
+        String evidenceNo = fadadaClient.personDeposit(memberDO, PrefixConstant.FDD_COM_APPLY_PREFIX + memberDO.getId());
+        memberDO.setEvidenceNo(evidenceNo);
+        memberService.updateById(memberDO);
+        return Response.restResult(memberDO, ResultCode.SUCCESS);
     }
 
 }
