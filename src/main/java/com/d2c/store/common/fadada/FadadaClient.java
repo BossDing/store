@@ -50,7 +50,7 @@ public class FadadaClient {
     //版本号
     private static String V = "2.0";
     //图片域名
-    private static String PIC_BASE="http://s.fune.store";
+    private static String PIC_BASE = "http://s.fune.store";
 
     public static void main(String[] args) throws MalformedURLException, URISyntaxException {
         /**
@@ -96,12 +96,17 @@ public class FadadaClient {
         p2PDO.setMobile("123456789");
         p2PDO.setCustomerId("DB8C8351459F2DEE51A1DEEDB221BBDC2");
         //generateContract("template01","contract_01","测试合同",list,orderDO,accountDO,memberDO,p2PDO);
-        extSignAuto("15CBE6F987621E865C6A194A16C6770E", "transation111", "contract_01", "测试合同");
+        //extSignAuto("15CBE6F987621E865C6A194A16C6770E", "transation111", "contract_01", "测试合同");
         p2PDO.setCreditCodeFile("https://img1.360buyimg.com/imgb/s250x250_jfs/t27610/66/981425374/258674/92bbf014/5bbf1420N3362755f.jpg");
         p2PDO.setPowerAttorneyFile("https://img1.360buyimg.com/imgb/s250x250_jfs/t27610/66/981425374/258674/92bbf014/5bbf1420N3362755f.jpg");
         p2PDO.setLegalName("lin");
         p2PDO.setIdentity("330327198905051111");
-        companyDeposit(p2PDO, "12", "12");
+        //companyDeposit(p2PDO, "12", "12");
+        FadadaClient client = new FadadaClient();
+        client.setAPP_ID("401957");
+        client.setAPP_SECRET("mcUHJw9VFmQdYcIESO6GDHTu");
+        client.setHOST("http://test.api.fabigbig.com:8888/api/");
+        client.registerAccount("m123123", "1");
     }
 
     /**
@@ -383,6 +388,7 @@ public class FadadaClient {
         req.setContract_id(contract_id);//合同编号
         req.setDoc_title(doc_title);//文档标题
         req.setReturn_url("");//页面跳转URL（签署结果同步通知）
+        req.setNotify_url("");//签约结果异步通知
         //短信校验该参数必填
         String sign_url = base.invokeExtSign(req, customer_mobile, customer_name, customer_ident_no);
         return sign_url;
@@ -442,7 +448,7 @@ public class FadadaClient {
                 }
                 file.createNewFile();
             }
-            URL url = new URL(PIC_BASE+urlString);// 构造URL
+            URL url = new URL(PIC_BASE + urlString);// 构造URL
             URLConnection con = url.openConnection();
             InputStream is = con.getInputStream();// 输入流
             //String code = con.getHeaderField("Content-Encoding");
