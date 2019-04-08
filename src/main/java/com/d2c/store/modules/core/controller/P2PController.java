@@ -83,7 +83,7 @@ public class P2PController extends BaseCtrl<P2PDO, P2PQuery> {
     @RequestMapping(value = "/fadada/sign", method = RequestMethod.POST)
     public R<P2PDO> getSign(String id) {
         P2PDO p2pDO = this.service.getById(Long.valueOf(id));
-        Asserts.isNull("尚未进行企业认证", p2pDO.getCustomerId(), p2pDO.getName());
+        Asserts.notNull("尚未进行企业认证", p2pDO.getCustomerId(), p2pDO.getName());
         String signImg = fadadaClient.customSignature(p2pDO.getCustomerId(), p2pDO.getName());
         String signId = fadadaClient.addSignature(p2pDO.getCustomerId(), signImg);
         p2pDO.setSignId(signId);
