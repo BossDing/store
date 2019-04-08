@@ -14,7 +14,6 @@ import com.d2c.store.modules.core.model.P2PDO;
 import com.d2c.store.modules.core.service.P2PService;
 import com.d2c.store.modules.logger.service.SmsService;
 import com.d2c.store.modules.member.model.MemberDO;
-import com.d2c.store.modules.member.service.AccountService;
 import com.d2c.store.modules.member.service.MemberService;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -41,8 +40,6 @@ public class C_MemberController extends BaseController {
     private SmsService smsService;
     @Autowired
     private MemberService memberService;
-    @Autowired
-    private AccountService accountService;
     @Autowired
     private FadadaClient fadadaClient;
 
