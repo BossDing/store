@@ -13,13 +13,18 @@ import com.d2c.store.common.api.PageModel;
 import com.d2c.store.common.api.Response;
 import com.d2c.store.common.api.ResultCode;
 import com.d2c.store.common.api.constant.PrefixConstant;
+import com.d2c.store.common.fadada.FadadaClient;
 import com.d2c.store.common.utils.QueryUtil;
 import com.d2c.store.common.utils.ReflectUtil;
 import com.d2c.store.modules.core.model.P2PDO;
 import com.d2c.store.modules.core.service.P2PService;
+import com.d2c.store.modules.member.model.AccountDO;
 import com.d2c.store.modules.member.model.AddressDO;
 import com.d2c.store.modules.member.model.MemberDO;
+import com.d2c.store.modules.member.query.AccountQuery;
+import com.d2c.store.modules.member.service.AccountService;
 import com.d2c.store.modules.member.service.AddressService;
+import com.d2c.store.modules.member.service.MemberService;
 import com.d2c.store.modules.order.model.CartItemDO;
 import com.d2c.store.modules.order.model.OrderDO;
 import com.d2c.store.modules.order.model.OrderItemDO;
@@ -72,6 +77,10 @@ public class C_OrderController extends BaseController {
     private OrderPromotionHandler orderPromotionHandler;
     @Autowired
     private RedisTemplate redisTemplate;
+    @Autowired
+    private MemberService memberService;
+    @Autowired
+    private AccountService accountService;
 
     @ApiOperation(value = "立即结算")
     @RequestMapping(value = "/settle", method = RequestMethod.POST)
@@ -316,6 +325,50 @@ public class C_OrderController extends BaseController {
         Asserts.eq(order.getMemberId(), member.getId(), "订单不属于本人");
         orderService.doDelete(order.getSn());
         return Response.restResult(null, ResultCode.SUCCESS);
+    }
+
+    @ApiOperation(value = "订单签约")
+    @RequestMapping(value = "/sign", method = RequestMethod.POST)
+    public R signContract(String orderSn) {
+        MemberDO memberDO = loginMemberHolder.getLoginMember();
+        Asserts.notNull("会员姓名，身份证和手机号不能为空", memberDO.getName(), memberDO.getIdentity(), memberDO.getMobile());
+        if (memberDO.getCustomerId() == null) {
+            //注册
+            String customerId = FadadaClient.registerAccount("m_" + memberDO.getId(), "1");
+            memberDO.setCustomerId(customerId);
+        }
+        if (memberDO.getEvidenceNo() == null) {
+            //存证
+            String evidenceNo = FadadaClient.personDeposit(memberDO, "DA" + memberDO.getId());
+            FadadaClient.applyClinetNumcert(memberDO.getCustomerId(), evidenceNo);
+            memberService.updateById(memberDO);
+        }
+        //合同填充
+        OrderQuery oq = new OrderQuery();
+        oq.setSn(orderSn);
+        OrderDO orderDO = orderService.getOne(QueryUtil.buildWrapper(oq));
+        OrderItemQuery oiq = new OrderItemQuery();
+        oiq.setOrderSn(new String[]{orderSn});
+        List<OrderItemDO> items = orderItemService.list(QueryUtil.buildWrapper(oiq));
+        AccountQuery aq = new AccountQuery();
+        aq.setMemberId(memberDO.getId());
+        AccountDO accountDO = accountService.getOne(QueryUtil.buildWrapper(aq));
+        P2PDO p2PDO = p2PService.getById(accountDO.getP2pId());
+        //测试数据
+        FadadaClient.generateContract(FadadaClient.template_id, "C" + orderSn, p2PDO.getName() + "债权合同", items, orderDO, accountDO, memberDO, p2PDO);
+        //手动签章
+        String signUrl = FadadaClient.extsign(memberDO.getCustomerId(), "T_" + orderSn, "C_" + orderSn, p2PDO.getName() + "债权合同", memberDO.getMobile(), memberDO.getName(), memberDO.getIdentity());
+        return Response.restResult(signUrl, ResultCode.SUCCESS);
+    }
+
+    @ApiOperation(value = "合同查看")
+    @RequestMapping(value = "/view/contract", method = RequestMethod.POST)
+    public R viewContract(String orderSn) {
+        OrderQuery oq = new OrderQuery();
+        oq.setSn(orderSn);
+        OrderDO orderDO = orderService.getOne(QueryUtil.buildWrapper(oq));
+        String viewUrl = FadadaClient.viewContract(orderDO.getContractId());
+        return Response.restResult(viewUrl, ResultCode.SUCCESS);
     }
 
 }
