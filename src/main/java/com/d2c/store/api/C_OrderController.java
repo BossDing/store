@@ -13,7 +13,7 @@ import com.d2c.store.common.api.PageModel;
 import com.d2c.store.common.api.Response;
 import com.d2c.store.common.api.ResultCode;
 import com.d2c.store.common.api.constant.PrefixConstant;
-import com.d2c.store.common.sdk.fadada.FadadaClient;
+import com.d2c.store.common.fadada.FadadaClient;
 import com.d2c.store.common.utils.QueryUtil;
 import com.d2c.store.common.utils.ReflectUtil;
 import com.d2c.store.modules.core.model.P2PDO;
