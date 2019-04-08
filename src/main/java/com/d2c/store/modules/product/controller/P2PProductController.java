@@ -31,7 +31,7 @@ public class P2PProductController extends BaseCtrl<P2PProductDO, P2PProductQuery
     public R<P2PProductDO> insert(@RequestBody P2PProductDO entity) {
         P2PProductQuery query = new P2PProductQuery();
         query.setP2pId(entity.getP2pId());
-        query.setProductId(entity.getProductId());
+        query.setProductId(new Long[]{entity.getProductId()});
         p2PProductService.remove(QueryUtil.buildWrapper(query));
         return super.insert(entity);
     }

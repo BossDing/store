@@ -56,18 +56,18 @@ public class MemberDO extends BaseDelDO implements IMember {
     private Integer status;
     @ApiModelProperty(value = "性别")
     private String sex;
-    @TableField(exist = false)
-    @ApiModelProperty(value = "登录返回token")
-    private String loginToken;
-    @TableField(exist = false)
-    @ApiModelProperty(value = "p2p授权信息")
-    private AccountDO accountInfo;
     @ApiModelProperty(value = "法大大客户编号")
     private String customerId;
     @ApiModelProperty(value = "个人存证编号")
     private String evidenceNo;
     @ApiModelProperty(value = "签章图片")
     private String signId;
+    @TableField(exist = false)
+    @ApiModelProperty(value = "登录返回token")
+    private String loginToken;
+    @TableField(exist = false)
+    @ApiModelProperty(value = "p2p授权信息")
+    private AccountDO accountInfo;
 
     @JsonIgnore
     public String getPassword() {

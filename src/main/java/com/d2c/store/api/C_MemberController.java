@@ -72,7 +72,7 @@ public class C_MemberController extends BaseController {
 
     @ApiOperation(value = "法大大认证")
     @RequestMapping(value = "/fadada/apply", method = RequestMethod.POST)
-    public R fadadaApply() {
+    public R<MemberDO> fadadaApply() {
         MemberDO memberDO = loginMemberHolder.getLoginMember();
         Asserts.isNull("请先维护个人信息，真实姓名，手机，身份证不能为空", memberDO.getName(), memberDO.getIdentity(), memberDO.getMobile());
         String customerId = fadadaClient.registerAccount(PrefixConstant.FDD_PERSON_ACCOUNT_PREFIX + memberDO.getId(), "1");

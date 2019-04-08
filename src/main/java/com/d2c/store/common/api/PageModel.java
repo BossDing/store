@@ -1,5 +1,6 @@
 package com.d2c.store.common.api;
 
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -33,6 +34,34 @@ public class PageModel<T> extends Page<T> {
     public void setPs(long ps) {
         this.ps = ps;
         this.setSize(ps);
+    }
+
+    public String orderDesc() {
+        if (this.descs().length == 0) return null;
+        StringBuilder builder = new StringBuilder();
+        for (String field : this.descs()) {
+            builder.append(" " + field + " DESC,");
+        }
+        String orderStr = builder.toString();
+        return orderStr.substring(0, orderStr.length() - 1);
+    }
+
+    public String orderAsc() {
+        if (this.ascs().length == 0) return null;
+        StringBuilder builder = new StringBuilder();
+        for (String field : this.ascs()) {
+            builder.append(" " + field + " ASC,");
+        }
+        String orderStr = builder.toString();
+        return orderStr.substring(0, orderStr.length() - 1);
+    }
+
+    public String orderByStr() {
+        String descStr = this.orderDesc();
+        String ascStr = this.orderAsc();
+        if (StrUtil.isNotBlank(descStr)) return descStr;
+        if (StrUtil.isNotBlank(ascStr)) return ascStr;
+        return null;
     }
 
 }

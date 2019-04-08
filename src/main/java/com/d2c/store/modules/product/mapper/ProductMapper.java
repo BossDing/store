@@ -16,7 +16,7 @@ public interface ProductMapper extends BaseMapper<ProductDO> {
 
     int doReturnStock(@Param("id") Long id, @Param("quantity") Integer quantity);
 
-    List<ProductDO> findByQuery(@Param("p2pId") Long p2pId, @Param("query") ProductQuery query, @Param("offset") long offset, @Param("size") long size);
+    List<ProductDO> findByQuery(@Param("p2pId") Long p2pId, @Param("query") ProductQuery query, @Param("offset") long offset, @Param("size") long size, @Param("sort") String sort);
 
     int countByQuery(@Param("p2pId") Long p2pId, @Param("query") ProductQuery query);
 

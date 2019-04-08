@@ -19,6 +19,6 @@ public class P2PProductQuery extends BaseQuery {
     private Long p2pId;
     @Condition(condition = ConditionEnum.EQ)
     @ApiModelProperty(value = "商品ID")
-    private Long productId;
+    private Long[] productId;
 
 }
