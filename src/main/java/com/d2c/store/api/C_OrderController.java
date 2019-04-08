@@ -13,7 +13,7 @@ import com.d2c.store.common.api.PageModel;
 import com.d2c.store.common.api.Response;
 import com.d2c.store.common.api.ResultCode;
 import com.d2c.store.common.api.constant.PrefixConstant;
-import com.d2c.store.common.fadada.FadadaClient;
+import com.d2c.store.common.sdk.fadada.FadadaClient;
 import com.d2c.store.common.utils.QueryUtil;
 import com.d2c.store.common.utils.ReflectUtil;
 import com.d2c.store.modules.core.model.P2PDO;
@@ -336,7 +336,7 @@ public class C_OrderController extends BaseController {
     @RequestMapping(value = "/sign", method = RequestMethod.POST)
     public R signContract(String orderSn) {
         MemberDO memberDO = loginMemberHolder.getLoginMember();
-        Asserts.notNull("会员姓名，身份证和手机号不能为空", memberDO.getName(), memberDO.getIdentity(), memberDO.getMobile());
+        Asserts.notNull("会员姓名，身份证和手机号不能为空", memberDO.getNickname(), memberDO.getIdentity(), memberDO.getAccount());
         if (memberDO.getCustomerId() == null) {
             // 注册
             String customerId = fadadaClient.registerAccount("m_" + memberDO.getId(), "1");
@@ -362,7 +362,7 @@ public class C_OrderController extends BaseController {
         // 测试数据
         fadadaClient.generateContract(FadadaClient.template_id, "C" + orderSn, p2PDO.getName() + "债权合同", items, orderDO, accountDO, memberDO, p2PDO);
         // 手动签章
-        String signUrl = fadadaClient.extsign(memberDO.getCustomerId(), "T_" + orderSn, "C_" + orderSn, p2PDO.getName() + "债权合同", memberDO.getMobile(), memberDO.getName(), memberDO.getIdentity());
+        String signUrl = fadadaClient.extsign(memberDO.getCustomerId(), "T_" + orderSn, "C_" + orderSn, p2PDO.getName() + "债权合同", memberDO.getAccount(), memberDO.getNickname(), memberDO.getIdentity());
         return Response.restResult(signUrl, ResultCode.SUCCESS);
     }
 

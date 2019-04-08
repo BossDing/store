@@ -8,7 +8,7 @@ import com.d2c.store.common.api.Response;
 import com.d2c.store.common.api.ResultCode;
 import com.d2c.store.common.api.base.BaseCtrl;
 import com.d2c.store.common.api.constant.PrefixConstant;
-import com.d2c.store.common.fadada.FadadaClient;
+import com.d2c.store.common.sdk.fadada.FadadaClient;
 import com.d2c.store.common.utils.QueryUtil;
 import com.d2c.store.modules.core.model.P2PDO;
 import com.d2c.store.modules.core.query.P2PQuery;
@@ -62,9 +62,9 @@ public class P2PController extends BaseCtrl<P2PDO, P2PQuery> {
         Asserts.notNull("企业资料不全", p2PDO.getName(), p2PDO.getCreditCode(), p2PDO.getCreditCodeFile(), p2PDO.getPowerAttorneyFile(), p2PDO.getLegalName(), p2PDO.getIdentity(), p2PDO.getMobile());
         //法人注册
         MemberDO memberDO = new MemberDO();
-        memberDO.setName(p2PDO.getLegalName());
+        memberDO.setNickname(p2PDO.getLegalName());
         memberDO.setIdentity(p2PDO.getIdentity());
-        memberDO.setMobile(p2PDO.getMobile());
+        memberDO.setAccount(p2PDO.getMobile());
         String legalCustomerId = fadadaClient.registerAccount(PrefixConstant.FDD_LEGAL_ACCOUNT_PREFIX + id, "1");
         p2PDO.setLegalCustomerId(legalCustomerId);
         //企业注册

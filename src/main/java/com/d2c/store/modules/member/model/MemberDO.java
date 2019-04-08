@@ -60,8 +60,6 @@ public class MemberDO extends BaseDelDO implements IMember {
     private String customerId;
     @ApiModelProperty(value = "个人存证编号")
     private String evidenceNo;
-    @ApiModelProperty(value = "签章图片")
-    private String signId;
     @TableField(exist = false)
     @ApiModelProperty(value = "登录返回token")
     private String loginToken;

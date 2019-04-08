@@ -141,7 +141,7 @@ public class OrderServiceImpl extends BaseService<OrderMapper, OrderDO> implemen
         success &= this.update(orderDO, QueryUtil.buildWrapper(oq));
         // 订单明细签约
         OrderItemDO oi = new OrderItemDO();
-        oi.setStatus(OrderItemDO.StatusEnum.WAIT_DELIVER.name());
+        oi.setStatus(OrderItemDO.StatusEnum.WAIT_SIGN.name());
         OrderItemQuery oiq = new OrderItemQuery();
         oiq.setOrderSn(new String[]{orderSn});
         success &= orderItemService.update(oi, QueryUtil.buildWrapper(oiq));

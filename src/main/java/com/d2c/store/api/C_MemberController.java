@@ -7,13 +7,14 @@ import com.d2c.store.common.api.Asserts;
 import com.d2c.store.common.api.Response;
 import com.d2c.store.common.api.ResultCode;
 import com.d2c.store.common.api.constant.PrefixConstant;
-import com.d2c.store.common.fadada.FadadaClient;
+import com.d2c.store.common.sdk.fadada.FadadaClient;
 import com.d2c.store.common.utils.RequestUtil;
 import com.d2c.store.config.security.constant.SecurityConstant;
 import com.d2c.store.modules.core.model.P2PDO;
 import com.d2c.store.modules.core.service.P2PService;
 import com.d2c.store.modules.logger.service.SmsService;
 import com.d2c.store.modules.member.model.MemberDO;
+import com.d2c.store.modules.member.service.AccountService;
 import com.d2c.store.modules.member.service.MemberService;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -40,6 +41,8 @@ public class C_MemberController extends BaseController {
     private SmsService smsService;
     @Autowired
     private MemberService memberService;
+    @Autowired
+    private AccountService accountService;
     @Autowired
     private FadadaClient fadadaClient;
 
@@ -74,7 +77,7 @@ public class C_MemberController extends BaseController {
     @RequestMapping(value = "/fadada/apply", method = RequestMethod.POST)
     public R<MemberDO> fadadaApply() {
         MemberDO memberDO = loginMemberHolder.getLoginMember();
-        Asserts.isNull("请先维护个人信息，真实姓名，手机，身份证不能为空", memberDO.getName(), memberDO.getIdentity(), memberDO.getMobile());
+        Asserts.isNull("请先维护个人信息，真实姓名，手机，身份证不能为空", memberDO.getNickname(), memberDO.getIdentity(), memberDO.getAccount());
         String customerId = fadadaClient.registerAccount(PrefixConstant.FDD_PERSON_ACCOUNT_PREFIX + memberDO.getId(), "1");
         memberDO.setCustomerId(customerId);
         String evidenceNo = fadadaClient.personDeposit(memberDO, PrefixConstant.FDD_COM_APPLY_PREFIX + memberDO.getId());

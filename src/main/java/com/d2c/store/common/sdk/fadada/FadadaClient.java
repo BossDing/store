@@ -1,4 +1,4 @@
-package com.d2c.store.common.fadada;
+package com.d2c.store.common.sdk.fadada;
 
 import cn.hutool.core.convert.Convert;
 import cn.hutool.core.date.DateUtil;
@@ -77,12 +77,12 @@ public class FadadaClient {
         req.setCustomer_id(memberDO.getCustomerId()); //客户编号
         /**=======存证相关===========*/
         req.setPreservation_name("债券合同"); //存证名称
-        req.setPreservation_data_provider(memberDO.getName());//存证数据提供方
-        req.setName(memberDO.getName());//姓名
+        req.setPreservation_data_provider(memberDO.getNickname());//存证数据提供方
+        req.setName(memberDO.getNickname());//姓名
         /**=======证件相关===========*/
         req.setDocument_type("1");//证件类型默认是1：身份证
         req.setIdcard(memberDO.getIdentity());//证件号
-        req.setMobile(memberDO.getMobile());//手机号
+        req.setMobile(memberDO.getAccount());//手机号
         req.setVerified_time(DateUtil.format(new Date(), "yyyyMMddHHmmss"));//实名时间
         req.setVerified_type("1");//实名存证类型
         PublicSecurityEssentialFactor public_security_essential_factor = new
@@ -269,7 +269,7 @@ public class FadadaClient {
         paramter.put("sign_time", DateUtil.format(new Date(), "yyyyMMddHHmmss"));
         paramter.put("down_time", DateUtil.format(accountDO.getDeadline(), "yyyyMMddHHmmss"));//合同结束日期
         //甲方
-        paramter.put("part_a", memberDO.getName());
+        paramter.put("part_a", memberDO.getNickname());
         paramter.put("id_card_a", memberDO.getIdentity());
         paramter.put("address_a", orderDO.getProvince() + orderDO.getCity() + orderDO.getDistrict() + orderDO.getAddress());
         paramter.put("tel_a", orderDO.getMobile());
