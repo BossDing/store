@@ -60,7 +60,7 @@ public class P2PController extends BaseCtrl<P2PDO, P2PQuery> {
 
     @ApiOperation(value = "法大大注册和认证")
     @RequestMapping(value = "/fadada/apply", method = RequestMethod.POST)
-    public R<P2PDO> apply(@PathVariable String id) {
+    public R<P2PDO> apply(String id) {
         P2PDO p2PDO = this.service.getById(Long.valueOf(id));
         Asserts.notNull("企业资料不全", p2PDO.getName(), p2PDO.getCreditCode(), p2PDO.getCreditCodeFile(), p2PDO.getPowerAttorneyFile(), p2PDO.getLegalName(), p2PDO.getIdentity(), p2PDO.getMobile());
         //法人注册
@@ -85,7 +85,7 @@ public class P2PController extends BaseCtrl<P2PDO, P2PQuery> {
 
     @ApiOperation(value = "法大大签章获取")
     @RequestMapping(value = "/fadada/sign", method = RequestMethod.POST)
-    public R<P2PDO> getSign(@PathVariable String id) {
+    public R<P2PDO> getSign(String id) {
         P2PDO p2pDO = this.service.getById(Long.valueOf(id));
         Asserts.isNull("尚未进行企业认证", p2pDO.getCustomerId(), p2pDO.getName());
         String signImg = FadadaClient.customSignature(p2pDO.getCustomerId(), p2pDO.getName());
