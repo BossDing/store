@@ -77,7 +77,7 @@ public class C_MemberController extends BaseController {
     @RequestMapping(value = "/fadada/apply", method = RequestMethod.POST)
     public R<MemberDO> fadadaApply() {
         MemberDO memberDO = loginMemberHolder.getLoginMember();
-        Asserts.isNull("请先维护个人信息，真实姓名，手机，身份证不能为空", memberDO.getNickname(), memberDO.getIdentity(), memberDO.getAccount());
+        Asserts.notNull("请先维护个人信息，真实姓名，手机，身份证不能为空", memberDO.getNickname(), memberDO.getIdentity(), memberDO.getAccount());
         String customerId = fadadaClient.registerAccount(PrefixConstant.FDD_PERSON_ACCOUNT_PREFIX + memberDO.getId(), "1");
         memberDO.setCustomerId(customerId);
         String evidenceNo = fadadaClient.personDeposit(memberDO, PrefixConstant.FDD_COM_APPLY_PREFIX + memberDO.getId());
