@@ -13,7 +13,7 @@ import com.d2c.store.common.api.PageModel;
 import com.d2c.store.common.api.Response;
 import com.d2c.store.common.api.ResultCode;
 import com.d2c.store.common.api.constant.PrefixConstant;
-import com.d2c.store.common.fadada.FadadaClient;
+import com.d2c.store.common.sdk.fadada.FadadaClient;
 import com.d2c.store.common.utils.QueryUtil;
 import com.d2c.store.common.utils.ReflectUtil;
 import com.d2c.store.modules.core.model.P2PDO;
@@ -70,6 +70,10 @@ public class C_OrderController extends BaseController {
     @Autowired
     private CartItemService cartItemService;
     @Autowired
+    private MemberService memberService;
+    @Autowired
+    private AccountService accountService;
+    @Autowired
     private ProductService productService;
     @Autowired
     private ProductSkuService productSkuService;
@@ -78,9 +82,7 @@ public class C_OrderController extends BaseController {
     @Autowired
     private RedisTemplate redisTemplate;
     @Autowired
-    private MemberService memberService;
-    @Autowired
-    private AccountService accountService;
+    private FadadaClient fadadaClient;
 
     @ApiOperation(value = "立即结算")
     @RequestMapping(value = "/settle", method = RequestMethod.POST)
@@ -336,17 +338,17 @@ public class C_OrderController extends BaseController {
         MemberDO memberDO = loginMemberHolder.getLoginMember();
         Asserts.notNull("会员姓名，身份证和手机号不能为空", memberDO.getName(), memberDO.getIdentity(), memberDO.getMobile());
         if (memberDO.getCustomerId() == null) {
-            //注册
-            String customerId = FadadaClient.registerAccount("m_" + memberDO.getId(), "1");
+            // 注册
+            String customerId = fadadaClient.registerAccount("m_" + memberDO.getId(), "1");
             memberDO.setCustomerId(customerId);
         }
         if (memberDO.getEvidenceNo() == null) {
-            //存证
-            String evidenceNo = FadadaClient.personDeposit(memberDO, "DA" + memberDO.getId());
-            FadadaClient.applyClinetNumcert(memberDO.getCustomerId(), evidenceNo);
+            // 存证
+            String evidenceNo = fadadaClient.personDeposit(memberDO, "DA" + memberDO.getId());
+            fadadaClient.applyClinetNumcert(memberDO.getCustomerId(), evidenceNo);
             memberService.updateById(memberDO);
         }
-        //合同填充
+        // 合同填充
         OrderQuery oq = new OrderQuery();
         oq.setSn(orderSn);
         OrderDO orderDO = orderService.getOne(QueryUtil.buildWrapper(oq));
@@ -357,10 +359,10 @@ public class C_OrderController extends BaseController {
         aq.setMemberId(memberDO.getId());
         AccountDO accountDO = accountService.getOne(QueryUtil.buildWrapper(aq));
         P2PDO p2PDO = p2PService.getById(accountDO.getP2pId());
-        //测试数据
-        FadadaClient.generateContract(FadadaClient.template_id, "C" + orderSn, p2PDO.getName() + "债权合同", items, orderDO, accountDO, memberDO, p2PDO);
-        //手动签章
-        String signUrl = FadadaClient.extsign(memberDO.getCustomerId(), "T_" + orderSn, "C_" + orderSn, p2PDO.getName() + "债权合同", memberDO.getMobile(), memberDO.getName(), memberDO.getIdentity());
+        // 测试数据
+        fadadaClient.generateContract(FadadaClient.template_id, "C" + orderSn, p2PDO.getName() + "债权合同", items, orderDO, accountDO, memberDO, p2PDO);
+        // 手动签章
+        String signUrl = fadadaClient.extsign(memberDO.getCustomerId(), "T_" + orderSn, "C_" + orderSn, p2PDO.getName() + "债权合同", memberDO.getMobile(), memberDO.getName(), memberDO.getIdentity());
         return Response.restResult(signUrl, ResultCode.SUCCESS);
     }
 
@@ -370,7 +372,7 @@ public class C_OrderController extends BaseController {
         OrderQuery oq = new OrderQuery();
         oq.setSn(orderSn);
         OrderDO orderDO = orderService.getOne(QueryUtil.buildWrapper(oq));
-        String viewUrl = FadadaClient.viewContract(orderDO.getContractId());
+        String viewUrl = fadadaClient.viewContract(orderDO.getContractId());
         return Response.restResult(viewUrl, ResultCode.SUCCESS);
     }
 
