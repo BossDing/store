@@ -50,6 +50,8 @@ public class UserDO extends BaseDelDO {
     private String loginIp;
     @ApiModelProperty(value = "P2P平台ID")
     private Long p2pId;
+    @ApiModelProperty(value = "供应商ID")
+    private Long supplierId;
     @TableField(exist = false)
     @ApiModelProperty(value = "用户拥有的角色")
     private List<RoleDO> roles = new ArrayList<>();

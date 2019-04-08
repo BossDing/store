@@ -1,15 +1,20 @@
 package com.d2c.store.modules.order.controller;
 
 import com.baomidou.mybatisplus.extension.api.R;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.d2c.store.common.api.Asserts;
+import com.d2c.store.common.api.PageModel;
 import com.d2c.store.common.api.Response;
 import com.d2c.store.common.api.ResultCode;
 import com.d2c.store.common.api.base.BaseCtrl;
+import com.d2c.store.common.utils.QueryUtil;
 import com.d2c.store.modules.order.model.OrderDO;
 import com.d2c.store.modules.order.model.OrderItemDO;
 import com.d2c.store.modules.order.query.OrderItemQuery;
 import com.d2c.store.modules.order.service.OrderItemService;
 import com.d2c.store.modules.order.service.OrderService;
+import com.d2c.store.modules.security.model.UserDO;
+import com.d2c.store.modules.security.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,9 +31,20 @@ import org.springframework.web.bind.annotation.RestController;
 public class OrderItemController extends BaseCtrl<OrderItemDO, OrderItemQuery> {
 
     @Autowired
+    private UserService userService;
+    @Autowired
     private OrderService orderService;
     @Autowired
     private OrderItemService orderItemService;
+
+    @ApiOperation(value = "P2P查询数据")
+    @RequestMapping(value = "/list", method = RequestMethod.POST)
+    public R<Page<OrderItemDO>> list(PageModel page, OrderItemQuery query) {
+        UserDO user = userService.findByUsername(loginUserHolder.getUsername());
+        query.setSupplierId(user.getSupplierId());
+        Page<OrderItemDO> pager = (Page<OrderItemDO>) service.page(page, QueryUtil.buildWrapper(query));
+        return Response.restResult(pager, ResultCode.SUCCESS);
+    }
 
     @ApiOperation(value = "订单明细发货")
     @RequestMapping(value = "/deliver", method = RequestMethod.POST)
