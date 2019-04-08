@@ -134,9 +134,12 @@ public class C_OrderController extends BaseController {
             // 处理订单促销
             orderPromotionHandler.operator(order);
             // 消费金额的验算
-            P2PDO p2p = p2PService.getById(member.getAccountInfo().getP2pId());
-            BigDecimal LimitAmountMax = member.getAccountInfo().getOauthAmount().add(p2p.getDiffAmount());
-            BigDecimal LimitAmountMin = member.getAccountInfo().getOauthAmount().subtract(p2p.getDiffAmount());
+            AccountDO account = member.getAccountInfo();
+            Asserts.notNull("消费账户不能为空", account);
+            Asserts.gt(account.getOauthAmount(), BigDecimal.ZERO, "您可用的消费金额为零，无法完成本次消费");
+            P2PDO p2p = p2PService.getById(account.getP2pId());
+            BigDecimal LimitAmountMax = account.getOauthAmount().add(p2p.getDiffAmount());
+            BigDecimal LimitAmountMin = account.getOauthAmount().subtract(p2p.getDiffAmount());
             if (member.getAccountInfo().getOauthAmount().compareTo(p2p.getMinAmount()) >= 0) {
                 LimitAmountMin = p2p.getMinAmount().subtract(p2p.getDiffAmount());
             }
