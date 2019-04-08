@@ -69,7 +69,7 @@ public class C_ProductController extends BaseController {
             }
         }
         query.setStatus(1);
-        Page<ProductDO> pager = (Page<ProductDO>) productService.page(page, QueryUtil.buildWrapper(query, false));
+        Page<ProductDO> pager = (Page<ProductDO>) productService.findByQuery(Long.valueOf(request.getHeader("platformId")), query, page);
         return Response.restResult(pager, ResultCode.SUCCESS);
     }
 

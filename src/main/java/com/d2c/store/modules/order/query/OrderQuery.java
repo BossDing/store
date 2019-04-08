@@ -15,6 +15,9 @@ import lombok.EqualsAndHashCode;
 public class OrderQuery extends BaseQuery {
 
     @Condition(condition = ConditionEnum.EQ)
+    @ApiModelProperty(value = "平台ID")
+    private Long p2pId;
+    @Condition(condition = ConditionEnum.EQ)
     @ApiModelProperty(value = "会员ID")
     private Long memberId;
     @Condition(condition = ConditionEnum.EQ)
