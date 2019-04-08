@@ -70,16 +70,6 @@ public class C_MemberController extends BaseController {
         return Response.restResult(member, ResultCode.SUCCESS);
     }
 
-    @ApiOperation(value = "更新")
-    @RequestMapping(value = "/update", method = RequestMethod.POST)
-    public R update(MemberDO memberDO) {
-        if (memberDO.getId() == null) {
-            memberDO.setId(loginMemberHolder.getLoginMember().getId());
-        }
-        memberService.updateById(memberDO);
-        return Response.restResult(null, ResultCode.SUCCESS);
-    }
-
     @ApiOperation(value = "法大大认证")
     @RequestMapping(value = "/fadada/apply", method = RequestMethod.POST)
     public R fadadaApply() {
