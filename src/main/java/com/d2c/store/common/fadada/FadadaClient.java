@@ -49,6 +49,8 @@ public class FadadaClient {
     private static String APP_SECRET;
     //版本号
     private static String V = "2.0";
+    //图片域名
+    private static String PIC_BASE="http://s.fune.store";
 
     public static void main(String[] args) throws MalformedURLException, URISyntaxException {
         /**
@@ -85,7 +87,7 @@ public class FadadaClient {
         orderDO.setAddress("莲花峰路12号");
         orderDO.setMobile("13197677777");
         AccountDO accountDO = new AccountDO();
-        accountDO.setAmount(new BigDecimal(6));
+        accountDO.setOauthAmount(new BigDecimal(6));
         accountDO.setDeadline(new Date());
         P2PDO p2PDO = new P2PDO();
         p2PDO.setName("杭州迪尔西");
@@ -331,8 +333,8 @@ public class FadadaClient {
         paramter.put("address_b", p2PDO.getAddress());
         paramter.put("tel_b", p2PDO.getMobile());
         //合同金额
-        paramter.put("xf_money", accountDO.getAmount());//剩余出借本金小写
-        paramter.put("xf_max_money", Convert.digitToChinese(accountDO.getAmount()));//剩余出借本金大写
+        paramter.put("xf_money", accountDO.getOauthAmount());//剩余出借本金小写
+        paramter.put("xf_max_money", Convert.digitToChinese(accountDO.getOauthAmount()));//剩余出借本金大写
         paramter.put("price", orderDO.getPayAmount());//出借本金小写
         paramter.put("max_price", Convert.digitToChinese(orderDO.getPayAmount()));//出借本金大写
         return paramter.toString();
@@ -440,7 +442,7 @@ public class FadadaClient {
                 }
                 file.createNewFile();
             }
-            URL url = new URL(urlString);// 构造URL
+            URL url = new URL(PIC_BASE+urlString);// 构造URL
             URLConnection con = url.openConnection();
             InputStream is = con.getInputStream();// 输入流
             //String code = con.getHeaderField("Content-Encoding");
