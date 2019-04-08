@@ -42,6 +42,7 @@ public class P2PDO extends BaseDelDO {
     @Assert(type = AssertEnum.NOT_NULL)
     @ApiModelProperty(value = "授权有效期-小时")
     private Integer oauthTime;
+    //
     @ApiModelProperty(value = "法大大客户编号")
     private String customerId;
     @ApiModelProperty(value = "企业存证编号")

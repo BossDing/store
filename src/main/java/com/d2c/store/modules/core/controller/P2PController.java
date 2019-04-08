@@ -1,10 +1,6 @@
 package com.d2c.store.modules.core.controller;
 
 import com.baomidou.mybatisplus.extension.api.R;
-import com.d2c.store.common.api.Asserts;
-import com.d2c.store.common.api.Response;
-import com.d2c.store.common.api.ResultCode;
-import com.baomidou.mybatisplus.extension.api.R;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.d2c.store.common.api.Asserts;
 import com.d2c.store.common.api.PageModel;
@@ -12,7 +8,7 @@ import com.d2c.store.common.api.Response;
 import com.d2c.store.common.api.ResultCode;
 import com.d2c.store.common.api.base.BaseCtrl;
 import com.d2c.store.common.api.constant.PrefixConstant;
-import com.d2c.store.common.fadada.FadadaClient;
+import com.d2c.store.common.sdk.fadada.FadadaClient;
 import com.d2c.store.common.utils.QueryUtil;
 import com.d2c.store.modules.core.model.P2PDO;
 import com.d2c.store.modules.core.query.P2PQuery;
@@ -23,8 +19,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
-import io.swagger.annotations.ApiOperation;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -36,8 +30,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/back/p2p")
 public class P2PController extends BaseCtrl<P2PDO, P2PQuery> {
+
     @Autowired
     private UserService userService;
+    @Autowired
+    private FadadaClient fadadaClient;
 
     @ApiOperation(value = "P2P查询数据")
     @RequestMapping(value = "/list", method = RequestMethod.POST)
@@ -69,16 +66,16 @@ public class P2PController extends BaseCtrl<P2PDO, P2PQuery> {
         memberDO.setIdentity(p2PDO.getIdentity());
         memberDO.setMobile(p2PDO.getMobile());
         String applyNum = PrefixConstant.FDD_APPLYNUM_PREFIX + id;
-        String legalCustomerId = FadadaClient.registerAccount(id, "1");
+        String legalCustomerId = fadadaClient.registerAccount(id, "1");
         p2PDO.setLegalCustomerId(legalCustomerId);
         //企业注册
-        String customerId = FadadaClient.registerAccount(id, "2");
+        String customerId = fadadaClient.registerAccount(id, "2");
         p2PDO.setCustomerId(customerId);
         //企业认证
-        String evidenceNo = FadadaClient.companyDeposit(p2PDO, PrefixConstant.FDD_TRANSATION_PREFIX + id, PrefixConstant.FDD_APPLYNUM_PREFIX + id);
+        String evidenceNo = fadadaClient.companyDeposit(p2PDO, PrefixConstant.FDD_TRANSATION_PREFIX + id, PrefixConstant.FDD_APPLYNUM_PREFIX + id);
         p2PDO.setEvidenceNo(evidenceNo);
         //证书申请
-        FadadaClient.applyClinetNumcert(customerId, evidenceNo);
+        fadadaClient.applyClinetNumcert(customerId, evidenceNo);
         this.service.updateById(p2PDO);
         return Response.restResult(p2PDO, ResultCode.SUCCESS);
     }
@@ -88,10 +85,11 @@ public class P2PController extends BaseCtrl<P2PDO, P2PQuery> {
     public R<P2PDO> getSign(String id) {
         P2PDO p2pDO = this.service.getById(Long.valueOf(id));
         Asserts.isNull("尚未进行企业认证", p2pDO.getCustomerId(), p2pDO.getName());
-        String signImg = FadadaClient.customSignature(p2pDO.getCustomerId(), p2pDO.getName());
-        String signId = FadadaClient.addSignature(p2pDO.getCustomerId(), signImg);
+        String signImg = fadadaClient.customSignature(p2pDO.getCustomerId(), p2pDO.getName());
+        String signId = fadadaClient.addSignature(p2pDO.getCustomerId(), signImg);
         p2pDO.setSignId(signId);
         this.service.updateById(p2pDO);
         return Response.restResult(p2pDO, ResultCode.SUCCESS);
     }
+
 }
