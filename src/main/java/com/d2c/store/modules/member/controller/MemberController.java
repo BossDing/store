@@ -12,6 +12,7 @@ import com.d2c.store.modules.member.model.AccountDO;
 import com.d2c.store.modules.member.model.MemberDO;
 import com.d2c.store.modules.member.query.AccountQuery;
 import com.d2c.store.modules.member.query.MemberQuery;
+import com.d2c.store.modules.member.service.AccountService;
 import com.d2c.store.modules.member.service.MemberService;
 import com.d2c.store.modules.security.model.UserDO;
 import com.d2c.store.modules.security.service.UserService;
@@ -38,6 +39,8 @@ public class MemberController extends BaseCtrl<MemberDO, MemberQuery> {
     @Autowired
     private UserService userService;
     @Autowired
+    private AccountService accountService;
+    @Autowired
     private MemberService memberService;
 
     @ApiOperation(value = "P2P查询数据")
@@ -45,7 +48,7 @@ public class MemberController extends BaseCtrl<MemberDO, MemberQuery> {
     public R<Page<MemberDO>> list(PageModel page, AccountQuery query) {
         UserDO user = userService.findByUsername(loginUserHolder.getUsername());
         query.setP2pId(user.getP2pId());
-        Page<AccountDO> pager = (Page<AccountDO>) service.page(page, QueryUtil.buildWrapper(query));
+        Page<AccountDO> pager = (Page<AccountDO>) accountService.page(page, QueryUtil.buildWrapper(query));
         List<Long> memberIds = new ArrayList<>();
         Map<Long, AccountDO> accountMap = new ConcurrentHashMap<>();
         for (AccountDO account : pager.getRecords()) {
