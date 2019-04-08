@@ -36,31 +36,31 @@ public class PageModel<T> extends Page<T> {
         this.setSize(ps);
     }
 
-    public String orderDesc() {
-        if (this.descs().length == 0) return null;
+    public String orderDesc(String prefix) {
+        if (this.descs() == null || this.descs().length == 0) return null;
         StringBuilder builder = new StringBuilder();
         for (String field : this.descs()) {
-            builder.append(" " + field + " DESC,");
+            builder.append(" " + prefix + "." + field + " DESC,");
         }
         String orderStr = builder.toString();
         return orderStr.substring(0, orderStr.length() - 1);
     }
 
-    public String orderAsc() {
-        if (this.ascs().length == 0) return null;
+    public String orderAsc(String prefix) {
+        if (this.ascs() == null || this.ascs().length == 0) return null;
         StringBuilder builder = new StringBuilder();
         for (String field : this.ascs()) {
-            builder.append(" " + field + " ASC,");
+            builder.append(" " + prefix + "." + field + " ASC,");
         }
         String orderStr = builder.toString();
         return orderStr.substring(0, orderStr.length() - 1);
     }
 
-    public String orderByStr() {
-        String descStr = this.orderDesc();
-        String ascStr = this.orderAsc();
-        if (StrUtil.isNotBlank(descStr)) return descStr;
+    public String orderByStr(String prefix) {
+        String ascStr = this.orderAsc(prefix);
+        String descStr = this.orderDesc(prefix);
         if (StrUtil.isNotBlank(ascStr)) return ascStr;
+        if (StrUtil.isNotBlank(descStr)) return descStr;
         return null;
     }
 

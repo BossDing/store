@@ -110,7 +110,7 @@ public class ProductServiceImpl extends BaseService<ProductMapper, ProductDO> im
         Page<ProductDO> pager = new Page<>();
         int total = productMapper.countByQuery(p2pId, query);
         if (total > 0) {
-            List<ProductDO> list = productMapper.findByQuery(p2pId, query, page.offset(), page.getSize(), page.orderByStr());
+            List<ProductDO> list = productMapper.findByQuery(p2pId, query, page.offset(), page.getSize(), page.orderByStr("p"));
             pager.setCurrent(page.getCurrent());
             pager.setSize(page.getSize());
             pager.setTotal(total);
