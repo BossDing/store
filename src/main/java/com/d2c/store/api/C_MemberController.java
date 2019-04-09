@@ -74,13 +74,24 @@ public class C_MemberController extends BaseController {
     @RequestMapping(value = "/fadada/apply", method = RequestMethod.POST)
     public R<MemberDO> fadadaApply() {
         MemberDO memberDO = loginMemberHolder.getLoginMember();
+        MemberDO member = new MemberDO();
+        member.setId(memberDO.getId());
         Asserts.notNull("请先维护个人信息，真实姓名，手机，身份证不能为空", memberDO.getNickname(), memberDO.getIdentity(), memberDO.getAccount());
-        String customerId = fadadaClient.registerAccount(PrefixConstant.FDD_PERSON_ACCOUNT_PREFIX + memberDO.getId(), "1");
-        memberDO.setCustomerId(customerId);
-        String evidenceNo = fadadaClient.personDeposit(memberDO, PrefixConstant.FDD_PERSON_APPLY_PREFIX + memberDO.getId());
-        memberDO.setEvidenceNo(evidenceNo);
-        fadadaClient.applyClinetNumcert(memberDO.getCustomerId(), memberDO.getEvidenceNo());
-        memberService.updateById(memberDO);
+        if (memberDO.getCustomerId() == null) {
+            String customerId = fadadaClient.registerAccount(PrefixConstant.FDD_PERSON_ACCOUNT_PREFIX + memberDO.getId(), "1");
+            member.setCustomerId(customerId);
+        }
+        if (memberDO.getEvidenceNo() == null) {
+            String evidenceNo = fadadaClient.personDeposit(memberDO, PrefixConstant.FDD_PERSON_APPLY_PREFIX + memberDO.getId());
+            member.setEvidenceNo(evidenceNo);
+            fadadaClient.applyClinetNumcert(memberDO.getCustomerId(), memberDO.getEvidenceNo());
+        }
+        if (memberDO.getSignId() == null) {
+            String singImg = fadadaClient.customSignature(memberDO.getCustomerId(), memberDO.getNickname());
+            String signId = fadadaClient.addSignature(memberDO.getCustomerId(), singImg);
+            member.setSignId(signId);
+        }
+        memberService.updateById(member);
         return Response.restResult(memberDO, ResultCode.SUCCESS);
     }
 
