@@ -1,5 +1,5 @@
 server:
-  port: 8001
+  port: 8002
   tomcat:
     uri-encoding: UTF-8
     max-threads: 1000
