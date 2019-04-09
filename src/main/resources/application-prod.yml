@@ -8,7 +8,7 @@ server:
 # spring
 spring:
   datasource:
-    url: jdbc:mysql://rdsb2emir2yjjry.mysql.rds.aliyuncs.com:3306/fune?useUnicode=true&characterEncoding=utf-8&useAffectedRows=true&useSSL=false&serverTimezone=Asia/Shanghai
+    url: jdbc:mysql://rdsb2emir2yjjry.mysql.rds.aliyuncs.com:3306/store?useUnicode=true&characterEncoding=utf-8&useAffectedRows=true&useSSL=false&serverTimezone=Asia/Shanghai
     username: ENC(FRkJG3JyNu7/K0XsNHcr9Q==)
     password: ENC(wmdVNs2rTK914M5NJXfpt8/sYrcdoAUL)
     type: com.alibaba.druid.pool.DruidDataSource
@@ -79,6 +79,7 @@ store:
     host: http://test.api.fabigbig.com:8888/api/
     app-id: ENC(2dxtonNRxZId4nkAwggaww==)
     app-secret: ENC(hC/hl3t6LG4Xrf7YgdhDfRqYca38Gq1VAoO+54JuY0Yaxrg17Q6nqw==)
+    notify-url: https://yliao.com/api/callback/fadada
 
 #logging:
 #  level:

@@ -37,20 +37,21 @@ import java.util.List;
 @Component
 public class FadadaClient {
 
-    //测试用的模板ID
+    // 测试用的模板ID
     public static final String template_id = "template01";
-    //法大大服务器地址
+    // 法大大服务器地址
     private static String HOST;
-    //APPID
+    // APPID
     private static String APP_ID;
-    //APPSECRET
+    // APPSECRET
     private static String APP_SECRET;
-    //版本号
+    // 法大大回调地址
+    private static String NOTIFY_URL;
+    // 版本号
     private static String V = "2.0";
-    //图片域名
+    // 图片域名
     private static String PIC_BASE = "http://s.fune.store";
 
-    private static final String Notify_url="http://yliao.com/api/order/fadada/callback";
     /**
      * 注册账号
      *
@@ -330,7 +331,7 @@ public class FadadaClient {
         req.setContract_id(contract_id);//合同编号
         req.setDoc_title(doc_title);//文档标题
         req.setReturn_url("");//页面跳转URL（签署结果同步通知）
-        req.setNotify_url(Notify_url);//签约结果异步通知
+        req.setNotify_url(NOTIFY_URL);//签约结果异步通知
         //短信校验该参数必填
         String sign_url = base.invokeExtSign(req, customer_mobile, customer_name, customer_ident_no);
         return sign_url;
@@ -426,6 +427,11 @@ public class FadadaClient {
     @Value("${store.fadada.app-secret}")
     public void setAPP_SECRET(String APP_SECRET) {
         FadadaClient.APP_SECRET = APP_SECRET;
+    }
+
+    @Value("${store.fadada.notify-url}")
+    public void setNotifyUrl(String notifyUrl) {
+        FadadaClient.NOTIFY_URL = notifyUrl;
     }
 
 }
