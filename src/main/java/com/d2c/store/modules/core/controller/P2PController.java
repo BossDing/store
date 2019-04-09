@@ -61,7 +61,7 @@ public class P2PController extends BaseCtrl<P2PDO, P2PQuery> {
         P2PDO p2PDO = this.service.getById(Long.valueOf(id));
         Asserts.notNull("企业资料不全", p2PDO.getName(), p2PDO.getCreditCode(), p2PDO.getCreditCodeFile(), p2PDO.getPowerAttorneyFile(), p2PDO.getLegalName(), p2PDO.getIdentity(), p2PDO.getMobile());
         // 法人注册
-        if (p2PDO.getLegalCustomerId()==null){
+        if (p2PDO.getLegalCustomerId() == null) {
             MemberDO memberDO = new MemberDO();
             memberDO.setNickname(p2PDO.getLegalName());
             memberDO.setIdentity(p2PDO.getIdentity());
@@ -69,7 +69,7 @@ public class P2PController extends BaseCtrl<P2PDO, P2PQuery> {
             String legalCustomerId = fadadaClient.registerAccount(PrefixConstant.FDD_LEGAL_ACCOUNT_PREFIX + id, "1");
             p2PDO.setLegalCustomerId(legalCustomerId);
         }
-        if(p2PDO.getCustomerId()==null){
+        if (p2PDO.getCustomerId() == null) {
             // 企业注册
             String customerId = fadadaClient.registerAccount(PrefixConstant.FDD_COM_ACCOUNT_PREFIX + id, "2");
             p2PDO.setCustomerId(customerId);
