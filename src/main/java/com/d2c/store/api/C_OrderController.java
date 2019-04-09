@@ -360,9 +360,11 @@ public class C_OrderController extends BaseController {
         AccountDO accountDO = accountService.getOne(QueryUtil.buildWrapper(aq));
         P2PDO p2PDO = p2PService.getById(accountDO.getP2pId());
         // 测试数据
-        fadadaClient.generateContract(FadadaClient.template_id, "C" + orderSn, p2PDO.getName() + "债权合同", items, orderDO, accountDO, memberDO, p2PDO);
+        String contract_id = "C_" + orderSn;
+        String doc_title = p2PDO.getName() + "债权合同";
+        fadadaClient.generateContract(FadadaClient.template_id, contract_id, doc_title, items, orderDO, accountDO, memberDO, p2PDO);
         // 手动签章
-        String signUrl = fadadaClient.extsign(memberDO.getCustomerId(), "T_" + orderSn, "C_" + orderSn, p2PDO.getName() + "债权合同", memberDO.getAccount(), memberDO.getNickname(), memberDO.getIdentity());
+        String signUrl = fadadaClient.extsign(memberDO.getCustomerId(), PrefixConstant.FDD_TRANSATION_PREFIX + orderSn, contract_id, doc_title, memberDO.getAccount(), memberDO.getNickname(), memberDO.getIdentity());
         return Response.restResult(signUrl, ResultCode.SUCCESS);
     }
 

@@ -79,6 +79,7 @@ public class C_MemberController extends BaseController {
         memberDO.setCustomerId(customerId);
         String evidenceNo = fadadaClient.personDeposit(memberDO, PrefixConstant.FDD_PERSON_APPLY_PREFIX + memberDO.getId());
         memberDO.setEvidenceNo(evidenceNo);
+        fadadaClient.applyClinetNumcert(memberDO.getCustomerId(), memberDO.getEvidenceNo());
         memberService.updateById(memberDO);
         return Response.restResult(memberDO, ResultCode.SUCCESS);
     }
