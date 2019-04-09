@@ -77,8 +77,8 @@ store:
       password: ENC(4uCdGxmEQtkdF+Pgl+GVkIE1xpUn36f0)
   fadada:
     host: http://test.api.fabigbig.com:8888/api/
-    app-id: 401957
-    app-secret: mcUHJw9VFmQdYcIESO6GDHTu
+    app-id: ENC(2dxtonNRxZId4nkAwggaww==)
+    app-secret: ENC(hC/hl3t6LG4Xrf7YgdhDfRqYca38Gq1VAoO+54JuY0Yaxrg17Q6nqw==)
 
 #logging:
 #  level:
