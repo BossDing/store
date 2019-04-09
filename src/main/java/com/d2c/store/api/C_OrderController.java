@@ -365,6 +365,10 @@ public class C_OrderController extends BaseController {
         fadadaClient.generateContract(FadadaClient.template_id, contract_id, doc_title, items, orderDO, accountDO, memberDO, p2PDO);
         // 手动签章
         String signUrl = fadadaClient.extsign(memberDO.getCustomerId(), PrefixConstant.FDD_TRANSATION_PREFIX + orderSn, contract_id, doc_title, memberDO.getAccount(), memberDO.getNickname(), memberDO.getIdentity());
+        OrderDO order = new OrderDO();
+        order.setId(orderDO.getId());
+        order.setContractId(contract_id);
+        orderService.updateById(order);
         return Response.restResult(signUrl, ResultCode.SUCCESS);
     }
 
@@ -378,4 +382,17 @@ public class C_OrderController extends BaseController {
         return Response.restResult(viewUrl, ResultCode.SUCCESS);
     }
 
+    @ApiOperation(value = "法大大回调接口")
+    @RequestMapping(value = "/fadada/callback", method = RequestMethod.POST)
+    public R fadadacallback(String transaction_id,String contract_id,String result_code,String result_desc,String timestamp,String msg_digest){
+        OrderQuery oq = new OrderQuery();
+        OrderDO orderDO=orderService.getOne(QueryUtil.buildWrapper(oq));
+        if(OrderDO.StatusEnum.WAIT_MEM_SIGN.name().equals(orderDO.getStatus())){
+            OrderDO order=new OrderDO();
+            order.setId(orderDO.getId());
+            order.setStatus(OrderDO.StatusEnum.WAIT_P2P_SIGN.name());
+            orderService.updateById(order);
+        }
+        return Response.restResult(null, ResultCode.SUCCESS);
+    }
 }

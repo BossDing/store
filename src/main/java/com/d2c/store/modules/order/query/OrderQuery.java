@@ -29,5 +29,8 @@ public class OrderQuery extends BaseQuery {
     @Condition(condition = ConditionEnum.IN)
     @ApiModelProperty(value = "状态")
     private String[] status;
+    @Condition(condition = ConditionEnum.EQ)
+    @ApiModelProperty(value = "合同编号")
+    private String contractId;
 
 }
