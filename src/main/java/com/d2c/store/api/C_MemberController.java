@@ -77,7 +77,7 @@ public class C_MemberController extends BaseController {
         Asserts.notNull("请先维护个人信息，真实姓名，手机，身份证不能为空", memberDO.getNickname(), memberDO.getIdentity(), memberDO.getAccount());
         String customerId = fadadaClient.registerAccount(PrefixConstant.FDD_PERSON_ACCOUNT_PREFIX + memberDO.getId(), "1");
         memberDO.setCustomerId(customerId);
-        String evidenceNo = fadadaClient.personDeposit(memberDO, PrefixConstant.FDD_COM_APPLY_PREFIX + memberDO.getId());
+        String evidenceNo = fadadaClient.personDeposit(memberDO, PrefixConstant.FDD_PERSON_APPLY_PREFIX + memberDO.getId());
         memberDO.setEvidenceNo(evidenceNo);
         memberService.updateById(memberDO);
         return Response.restResult(memberDO, ResultCode.SUCCESS);
