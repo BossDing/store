@@ -1,6 +1,5 @@
 package com.d2c.store.modules.order.controller;
 
-import cn.hutool.core.lang.Snowflake;
 import com.baomidou.mybatisplus.extension.api.R;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.d2c.store.common.api.Asserts;
@@ -80,8 +79,7 @@ public class OrderController extends BaseCtrl<OrderDO, OrderQuery> {
         Asserts.eq(orderDO.getStatus(), OrderDO.StatusEnum.WAIT_P2P_SIGN.name(), "订单状态不符");
         //p2p自动签章
         P2PDO p2PDO = p2PService.getById(orderDO.getP2pId());
-        Snowflake snowFlake = new Snowflake(2, 2);
-        fadadaClient.extSignAuto(p2PDO.getCustomerId(), PrefixConstant.FDD_TRANSATION_PREFIX + String.valueOf(snowFlake.nextId()), orderDO.getContractId(), p2PDO.getName() + "债权合同");
+        fadadaClient.extSignAuto(p2PDO.getCustomerId(), PrefixConstant.FDD_ORDER_C_TRANSATION_PREFIX + id, orderDO.getContractId(), p2PDO.getName() + "债权合同");
         //修改订单状态为客服待审核
         OrderDO order = new OrderDO();
         order.setId(id);

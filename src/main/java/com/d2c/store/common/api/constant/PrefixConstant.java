@@ -10,9 +10,21 @@ public interface PrefixConstant {
      */
     String ORDER_PREFIX = "T";
     /**
-     * 法大大业务-业务号前缀
+     * 法大大业务-企业认证业务号前缀
      */
-    String FDD_TRANSATION_PREFIX = "FT";
+    String FDD_COM_TRANSATION_PREFIX = "FCTR";
+    /**
+     * 法大大业务-用户认证业务号前缀
+     */
+    String FDD_PERSON_TRANSATION_PREFIX = "FPTR";
+    /**
+     * 法大大业务-订单用户签约业务号前缀
+     */
+    String FDD_ORDER_P_TRANSATION_PREFIX = "FOPT";
+    /**
+     * 法大大业务-订单企业签约业务号前缀
+     */
+    String FDD_ORDER_C_TRANSATION_PREFIX = "FOCR";
     /**
      * 法大大业务-企业认证申请前缀
      */

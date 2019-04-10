@@ -1,6 +1,5 @@
 package com.d2c.store.modules.core.controller;
 
-import cn.hutool.core.lang.Snowflake;
 import com.baomidou.mybatisplus.extension.api.R;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.d2c.store.common.api.Asserts;
@@ -76,8 +75,7 @@ public class P2PController extends BaseCtrl<P2PDO, P2PQuery> {
             p2PDO.setCustomerId(customerId);
         }
         // 企业认证
-        Snowflake snowFlake = new Snowflake(1, 2);
-        String evidenceNo = fadadaClient.companyDeposit(p2PDO, PrefixConstant.FDD_TRANSATION_PREFIX + String.valueOf(snowFlake.nextId()), PrefixConstant.FDD_COM_APPLY_PREFIX + id);
+        String evidenceNo = fadadaClient.companyDeposit(p2PDO, PrefixConstant.FDD_COM_TRANSATION_PREFIX + id, PrefixConstant.FDD_COM_APPLY_PREFIX + id);
         p2PDO.setEvidenceNo(evidenceNo);
         // 证书申请
         fadadaClient.applyClinetNumcert(p2PDO.getCustomerId(), evidenceNo);
