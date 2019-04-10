@@ -30,6 +30,9 @@ public class ProductDO extends BaseDelDO {
     @ApiModelProperty(value = "名称")
     private String name;
     @Assert(type = AssertEnum.NOT_NULL)
+    @ApiModelProperty(value = "款号")
+    private String sn;
+    @Assert(type = AssertEnum.NOT_NULL)
     @ApiModelProperty(value = "图片")
     private String pic;
     @Assert(type = AssertEnum.NOT_NULL)
