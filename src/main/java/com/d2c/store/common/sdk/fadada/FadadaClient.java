@@ -25,9 +25,11 @@ import com.d2c.store.modules.order.model.OrderItemDO;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.io.*;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.Date;
 import java.util.List;
 
@@ -50,7 +52,7 @@ public class FadadaClient {
     // 版本号
     private static String V = "2.0";
     // 图片域名
-    private static String PIC_BASE = "http://s.youliao.com";
+    private static String PIC_BASE = "http://s.yliao.com";
 
     /**
      * 注册账号
@@ -267,7 +269,7 @@ public class FadadaClient {
 
     private String getparamter(OrderDO orderDO, AccountDO accountDO, MemberDO memberDO, P2PDO p2PDO) {
         JSONObject paramter = new JSONObject();
-        paramter.put("order_id",orderDO.getContractId());
+        paramter.put("order_id", orderDO.getContractId());
         paramter.put("sign_time", DateUtil.format(new Date(), "yyyy-MM-dd HH:mm:ss"));
         paramter.put("down_time", DateUtil.format(accountDO.getDeadline(), "yyyy-MM-dd HH:mm:ss"));//合同结束日期
         //甲方
@@ -392,22 +394,8 @@ public class FadadaClient {
                 file.createNewFile();
             }
             URL url = new URL(PIC_BASE + urlString);// 构造URL
-            URLConnection con = url.openConnection();
-            InputStream is = con.getInputStream();// 输入流
-            //String code = con.getHeaderField("Content-Encoding");
-            // 1K的数据缓冲
-            byte[] bs = new byte[1024];
-            // 读取到的数据长度
-            int len;
-            // 输出的文件流
-            OutputStream os = new FileOutputStream(filename);
-            // 开始读取
-            while ((len = is.read(bs)) != -1) {
-                os.write(bs, 0, len);
-            }
-            // 完毕，关闭所有链接
-            os.close();
-            is.close();
+            BufferedImage img = ImageIO.read(url);
+            ImageIO.write(img, "jpg", new File(filename));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -438,4 +426,5 @@ public class FadadaClient {
     public void setTEMPLATE_ID(String TEMPLATE_ID) {
         FadadaClient.TEMPLATE_ID = TEMPLATE_ID;
     }
+
 }

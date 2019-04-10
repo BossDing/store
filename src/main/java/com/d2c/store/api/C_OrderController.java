@@ -365,7 +365,8 @@ public class C_OrderController extends BaseController {
         String doc_title = p2PDO.getName() + "债权合同";
         fadadaClient.generateContract(contract_id, doc_title, items, orderDO, accountDO, memberDO, p2PDO);
         // 手动签章
-        String signUrl = fadadaClient.extsign(memberDO.getCustomerId(), PrefixConstant.FDD_TRANSATION_PREFIX + orderSn, contract_id, doc_title, memberDO.getAccount(), memberDO.getNickname(), memberDO.getIdentity());
+        Snowflake snowFlake = new Snowflake(3, 2);
+        String signUrl = fadadaClient.extsign(memberDO.getCustomerId(), PrefixConstant.FDD_TRANSATION_PREFIX + String.valueOf(snowFlake.nextId()), contract_id, doc_title, memberDO.getAccount(), memberDO.getNickname(), memberDO.getIdentity());
         OrderDO order = new OrderDO();
         order.setId(orderDO.getId());
         order.setContractId(contract_id);
