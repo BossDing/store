@@ -236,7 +236,7 @@ public class FadadaClient {
         String result = base.invokeGenerateContract(TEMPLATE_ID, contract_id, doc_title,
                 font_size, font_type, paramter, dynamic_tables);
         JSONObject response = JSON.parseObject(result);
-        if ("2510".equals(response.getString("code"))) {
+        if ("2002".equals(response.getString("code"))) {
             return null;
         }
         Asserts.eq(response.getString("code"), "1000", response.getString("msg"));

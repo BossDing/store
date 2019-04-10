@@ -38,6 +38,9 @@ public class ProductSkuDO extends BaseDelDO {
     @ApiModelProperty(value = "规格")
     private String standard;
     @Assert(type = AssertEnum.NOT_NULL)
+    @ApiModelProperty(value = "成本价")
+    private BigDecimal costPrice;
+    @Assert(type = AssertEnum.NOT_NULL)
     @ApiModelProperty(value = "销售价")
     private BigDecimal sellPrice;
     @Assert(type = AssertEnum.NOT_NULL)
@@ -52,5 +55,8 @@ public class ProductSkuDO extends BaseDelDO {
     @Assert(type = AssertEnum.NOT_NULL)
     @ApiModelProperty(value = "运费")
     private String freight;
+    @Assert(type = AssertEnum.NOT_NULL)
+    @ApiModelProperty(value = "结算比例")
+    private String ratio;
 
 }

@@ -261,11 +261,13 @@ public class C_OrderController extends BaseController {
     private void buildOrderItem(ProductSkuDO sku, OrderItemDO orderItem) {
         orderItem.setType(OrderDO.TypeEnum.NORMAL.name());
         orderItem.setStatus(OrderItemDO.StatusEnum.WAIT_SIGN.name());
+        orderItem.setSkuSn(sku.getSn());
         orderItem.setBrandId(sku.getBrandId());
         orderItem.setSupplierId(sku.getSupplierId());
+        orderItem.setCostPrice(sku.getCostPrice());
+        orderItem.setRatio(sku.getRatio());
         orderItem.setProductPrice(sku.getSellPrice());
         orderItem.setRealPrice(sku.getSellPrice());
-        orderItem.setSkuSn(sku.getSn());
         orderItem.setFreightAmount(FreightDO.calculate(orderItem.getQuantity(), sku.getFreight()));
         orderItem.setPayAmount(BigDecimal.ZERO);
     }
