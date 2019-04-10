@@ -3,6 +3,7 @@ package com.d2c.store.modules.order.controller;
 import cn.hutool.core.lang.Snowflake;
 import com.baomidou.mybatisplus.extension.api.R;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.d2c.store.common.api.Asserts;
 import com.d2c.store.common.api.PageModel;
 import com.d2c.store.common.api.Response;
 import com.d2c.store.common.api.ResultCode;
@@ -72,23 +73,34 @@ public class OrderController extends BaseCtrl<OrderDO, OrderQuery> {
         return Response.restResult(pager, ResultCode.SUCCESS);
     }
 
-    @ApiOperation(value = "合同归档")
-    @RequestMapping(value = "/filling", method = RequestMethod.POST)
-    public R filling(String orderSn) {
-        fadadaClient.contractFilling("C_" + orderSn);
-        return Response.restResult(null, ResultCode.SUCCESS);
-    }
-
     @ApiOperation(value = "p2p签约")
     @RequestMapping(value = "/sign", method = RequestMethod.POST)
     public R p2pSign(Long id) {
         OrderDO orderDO = service.getById(id);
+        Asserts.eq(orderDO.getStatus(), OrderDO.StatusEnum.WAIT_P2P_SIGN.name(), "订单状态不符");
+        //p2p自动签章
         P2PDO p2PDO = p2PService.getById(orderDO.getP2pId());
         Snowflake snowFlake = new Snowflake(2, 2);
         fadadaClient.extSignAuto(p2PDO.getCustomerId(), PrefixConstant.FDD_TRANSATION_PREFIX + String.valueOf(snowFlake.nextId()), orderDO.getContractId(), p2PDO.getName() + "债权合同");
+        //修改订单状态为客服待审核
         OrderDO order = new OrderDO();
         order.setId(id);
         order.setStatus(OrderDO.StatusEnum.WAIT_CUS_SIGN.name());
+        service.updateById(order);
+        return Response.restResult(null, ResultCode.SUCCESS);
+    }
+
+    @ApiOperation(value = "合同归档(客服审核)")
+    @RequestMapping(value = "/filling", method = RequestMethod.POST)
+    public R filling(Long id) {
+        OrderDO orderDO = service.getById(id);
+        Asserts.eq(orderDO.getStatus(), OrderDO.StatusEnum.WAIT_CUS_SIGN.name(), "订单状态不符");
+        //合同归档
+        fadadaClient.contractFilling("C_" + orderDO.getSn());
+        //修改订单状态为待发货
+        OrderDO order = new OrderDO();
+        order.setId(orderDO.getId());
+        order.setStatus(OrderDO.StatusEnum.WAIT_DELIVER.name());
         service.updateById(order);
         return Response.restResult(null, ResultCode.SUCCESS);
     }

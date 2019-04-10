@@ -64,7 +64,6 @@ public class FadadaClient {
     public String registerAccount(String open_id, String account_type) {
         FddClientBase clientBase = new FddClientBase(APP_ID, APP_SECRET, V, HOST);
         String result = clientBase.invokeregisterAccount(open_id, account_type);
-        System.out.println(result);
         JSONObject response = JSON.parseObject(result);
         Asserts.eq(response.getString("code"), "1", response.getString("msg"));
         return response.getString("data");
@@ -95,7 +94,6 @@ public class FadadaClient {
         public_security_essential_factor.setApply_num(applyNum);//申请编号
         req.setPublic_security_essential_factor(public_security_essential_factor);//verified_type =1 公安部二要素
         String result = personDeposit.invokePersonDeposit(req);
-        System.out.println(result);
         JSONObject response = JSON.parseObject(result);
         Asserts.eq(response.getString("code"), "1", response.getString("msg"));
         return response.getString("data");
@@ -153,7 +151,6 @@ public class FadadaClient {
         msg.setPublic_security_essential_factor(public_security_essential_factor);//verified_type =1公安部二要素
         req.setCompany_principal_verified_msg(msg);//企业负责人身份:1.法人，2 代理人
         String result = companyDeposit.invokeCompanyDeposit(req);
-        System.out.println(result);
         JSONObject response = JSON.parseObject(result);
         Asserts.eq(response.getString("code"), "1", response.getString("msg"));
         return response.getString("data");
@@ -170,7 +167,8 @@ public class FadadaClient {
                 new ApplyClientNumCert(APP_ID, APP_SECRET, V, HOST);
         String result
                 = applyClientNumCert.invokeapplyClinetNumcert(customer_id, evidence_no);
-        System.out.println(result);
+        JSONObject response = JSON.parseObject(result);
+        Asserts.eq(response.getString("code"), "1", response.getString("msg"));
     }
 
     /**
@@ -213,7 +211,8 @@ public class FadadaClient {
         FddClientBase base = new FddClientBase(APP_ID, APP_SECRET, V, HOST);
         String doc_url = null;//模板公网下载地址
         String result = base.invokeUploadTemplate(template_id, file, doc_url);
-        System.out.println(result);
+        JSONObject response = JSON.parseObject(result);
+        Asserts.eq(response.getString("code"), "1", response.getString("msg"));
     }
 
     /**
@@ -236,8 +235,8 @@ public class FadadaClient {
         String dynamic_tables = getdynamic_tables(list);//动态表格
         String result = base.invokeGenerateContract(TEMPLATE_ID, contract_id, doc_title,
                 font_size, font_type, paramter, dynamic_tables);
-        System.out.println(result);
         JSONObject response = JSON.parseObject(result);
+        Asserts.eq(response.getString("code"), "1000", response.getString("msg"));
         return response;
     }
 
@@ -299,7 +298,7 @@ public class FadadaClient {
      * @param contract_id    合同编号
      * @param doc_title      文档标题
      */
-    public JSONObject extSignAuto(String customer_id, String transaction_id, String contract_id, String doc_title) {
+    public void extSignAuto(String customer_id, String transaction_id, String contract_id, String doc_title) {
         FddClientBase base = new FddClientBase(APP_ID, APP_SECRET, V, HOST);
         ExtsignReq req = new ExtsignReq();
         req.setCustomer_id(customer_id);//客户编号
@@ -310,7 +309,8 @@ public class FadadaClient {
         req.setDoc_title(doc_title);//文档标题
         req.setNotify_url("");//签署结果回调地址
         String result = base.invokeExtSignAuto(req);
-        return JSON.parseObject(result);
+        JSONObject response = JSON.parseObject(result);
+        Asserts.eq(response.getString("code"), "1000", response.getString("msg"));
     }
 
     /**
@@ -373,6 +373,8 @@ public class FadadaClient {
     public void contractFilling(String contract_id) {
         FddClientBase base = new FddClientBase(APP_ID, APP_SECRET, V, HOST);
         String result = base.invokeContractFilling(contract_id);
+        JSONObject response = JSON.parseObject(result);
+        Asserts.eq(response.getString("code"), "1000", response.getString("msg"));
     }
 
     /**
