@@ -80,6 +80,7 @@ store:
     app-id: ENC(2dxtonNRxZId4nkAwggaww==)
     app-secret: ENC(hC/hl3t6LG4Xrf7YgdhDfRqYca38Gq1VAoO+54JuY0Yaxrg17Q6nqw==)
     notify-url: http://test.yliao.com/api/callback/fadada
+    template-id: template02
 
 #logging:
 #  level:

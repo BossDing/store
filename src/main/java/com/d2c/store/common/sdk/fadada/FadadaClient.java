@@ -38,7 +38,7 @@ import java.util.List;
 public class FadadaClient {
 
     // 测试用的模板ID
-    public static final String template_id = "template01";
+    public static String TEMPLATE_ID;
     // 法大大服务器地址
     private static String HOST;
     // APPID
@@ -50,7 +50,7 @@ public class FadadaClient {
     // 版本号
     private static String V = "2.0";
     // 图片域名
-    private static String PIC_BASE = "http://s.fune.store";
+    private static String PIC_BASE = "http://s.youliao.com";
 
     /**
      * 注册账号
@@ -217,7 +217,6 @@ public class FadadaClient {
     /**
      * 模板填充
      *
-     * @param template_id 模板ID
      * @param contract_id 合同编号
      * @param doc_title   合同标题
      * @param list        订单明细列表
@@ -226,14 +225,14 @@ public class FadadaClient {
      * @param memberDO    会员账号
      * @param p2PDO       P2P平台
      */
-    public JSONObject generateContract(String template_id, String contract_id, String doc_title, List<OrderItemDO> list
+    public JSONObject generateContract(String contract_id, String doc_title, List<OrderItemDO> list
             , OrderDO orderDO, AccountDO accountDO, MemberDO memberDO, P2PDO p2PDO) {
         FddClientBase base = new FddClientBase(APP_ID, APP_SECRET, V, HOST);
         String font_size = "10";//字体大小
         String font_type = "0";//字体类型
         String paramter = getparamter(orderDO, accountDO, memberDO, p2PDO);//填充内容
         String dynamic_tables = getdynamic_tables(list);//动态表格
-        String result = base.invokeGenerateContract(template_id, contract_id, doc_title,
+        String result = base.invokeGenerateContract(TEMPLATE_ID, contract_id, doc_title,
                 font_size, font_type, paramter, dynamic_tables);
         System.out.println(result);
         JSONObject response = JSON.parseObject(result);
@@ -268,8 +267,9 @@ public class FadadaClient {
 
     private String getparamter(OrderDO orderDO, AccountDO accountDO, MemberDO memberDO, P2PDO p2PDO) {
         JSONObject paramter = new JSONObject();
-        paramter.put("sign_time", DateUtil.format(new Date(), "yyyyMMddHHmmss"));
-        paramter.put("down_time", DateUtil.format(accountDO.getDeadline(), "yyyyMMddHHmmss"));//合同结束日期
+        paramter.put("order_id",orderDO.getContractId());
+        paramter.put("sign_time", DateUtil.format(new Date(), "yyyy-MM-dd HH:mm:ss"));
+        paramter.put("down_time", DateUtil.format(accountDO.getDeadline(), "yyyy-MM-dd HH:mm:ss"));//合同结束日期
         //甲方
         paramter.put("part_a", memberDO.getNickname());
         paramter.put("id_card_a", memberDO.getIdentity());
@@ -434,4 +434,8 @@ public class FadadaClient {
         FadadaClient.NOTIFY_URL = notifyUrl;
     }
 
+    @Value("${store.fadada.template-id}")
+    public void setTEMPLATE_ID(String TEMPLATE_ID) {
+        FadadaClient.TEMPLATE_ID = TEMPLATE_ID;
+    }
 }
