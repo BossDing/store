@@ -323,8 +323,9 @@ public class FadadaClient {
      * @param customer_mobile   客户手机号
      * @param customer_name     客户名称
      * @param customer_ident_no 客户身份证
+     * @param returnUrl         页面跳转地址
      */
-    public String extsign(String customer_id, String transaction_id, String contract_id, String doc_title, String customer_mobile, String customer_name, String customer_ident_no) {
+    public String extsign(String customer_id, String transaction_id, String contract_id, String doc_title, String customer_mobile, String customer_name, String customer_ident_no, String returnUrl) {
         // JAVA----短信校验
         FddClientBase base = new FddClientBase(APP_ID, APP_SECRET, V, HOST);
         ExtsignReq req = new ExtsignReq();
@@ -332,7 +333,7 @@ public class FadadaClient {
         req.setTransaction_id(transaction_id);//交易号
         req.setContract_id(contract_id);//合同编号
         req.setDoc_title(doc_title);//文档标题
-        req.setReturn_url("");//页面跳转URL（签署结果同步通知）
+        req.setReturn_url(returnUrl);//页面跳转URL（签署结果同步通知）
         req.setNotify_url(NOTIFY_URL);//签约结果异步通知
         //短信校验该参数必填
         String sign_url = base.invokeExtSign(req, customer_mobile, customer_name, customer_ident_no);

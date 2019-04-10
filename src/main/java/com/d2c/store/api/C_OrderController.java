@@ -335,7 +335,7 @@ public class C_OrderController extends BaseController {
 
     @ApiOperation(value = "订单签约")
     @RequestMapping(value = "/sign", method = RequestMethod.POST)
-    public R signContract(String orderSn) {
+    public R signContract(String orderSn, String returnUrl) {
         MemberDO memberDO = loginMemberHolder.getLoginMember();
         Asserts.notNull("会员姓名，身份证和手机号不能为空", memberDO.getNickname(), memberDO.getIdentity(), memberDO.getAccount());
         if (memberDO.getCustomerId() == null) {
@@ -366,7 +366,7 @@ public class C_OrderController extends BaseController {
         fadadaClient.generateContract(contract_id, doc_title, items, orderDO, accountDO, memberDO, p2PDO);
         // 手动签章
         Snowflake snowFlake = new Snowflake(3, 2);
-        String signUrl = fadadaClient.extsign(memberDO.getCustomerId(), PrefixConstant.FDD_TRANSATION_PREFIX + String.valueOf(snowFlake.nextId()), contract_id, doc_title, memberDO.getAccount(), memberDO.getNickname(), memberDO.getIdentity());
+        String signUrl = fadadaClient.extsign(memberDO.getCustomerId(), PrefixConstant.FDD_TRANSATION_PREFIX + String.valueOf(snowFlake.nextId()), contract_id, doc_title, memberDO.getAccount(), memberDO.getNickname(), memberDO.getIdentity(), returnUrl);
         OrderDO order = new OrderDO();
         order.setId(orderDO.getId());
         order.setContractId(contract_id);
