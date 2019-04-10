@@ -30,6 +30,7 @@ public class C_CallbackController extends BaseController {
     @RequestMapping(value = "/fadada", method = RequestMethod.POST)
     public R fadada(String transaction_id, String contract_id, String result_code, String result_desc, String timestamp, String msg_digest) {
         OrderQuery oq = new OrderQuery();
+        oq.setContractId(contract_id);
         OrderDO orderDO = orderService.getOne(QueryUtil.buildWrapper(oq));
         if (OrderDO.StatusEnum.WAIT_MEM_SIGN.name().equals(orderDO.getStatus())) {
             OrderDO order = new OrderDO();
