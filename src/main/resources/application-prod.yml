@@ -82,6 +82,7 @@ store:
     notify-url: https://yliao.com/api/callback/fadada
     template-id: template02
 
-#logging:
-#  level:
-#    root: debug
+logging:
+  file: spring.log
+  level:
+    root: info
