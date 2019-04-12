@@ -6,15 +6,11 @@ import com.d2c.store.common.api.Response;
 import com.d2c.store.common.api.ResultCode;
 import com.d2c.store.common.api.base.BaseCtrl;
 import com.d2c.store.common.utils.QueryUtil;
-import com.d2c.store.modules.product.model.P2PProductDO;
-import com.d2c.store.modules.product.model.ProductDO;
-import com.d2c.store.modules.product.model.ProductSkuDO;
+import com.d2c.store.modules.product.model.*;
 import com.d2c.store.modules.product.query.P2PProductQuery;
 import com.d2c.store.modules.product.query.ProductQuery;
 import com.d2c.store.modules.product.query.ProductSkuQuery;
-import com.d2c.store.modules.product.service.P2PProductService;
-import com.d2c.store.modules.product.service.ProductService;
-import com.d2c.store.modules.product.service.ProductSkuService;
+import com.d2c.store.modules.product.service.*;
 import com.d2c.store.modules.security.model.UserDO;
 import com.d2c.store.modules.security.service.UserService;
 import io.swagger.annotations.Api;
@@ -35,11 +31,17 @@ public class ProductController extends BaseCtrl<ProductDO, ProductQuery> {
     @Autowired
     private UserService userService;
     @Autowired
+    private BrandService brandService;
+    @Autowired
+    private SupplierService supplierService;
+    @Autowired
     private ProductService productService;
     @Autowired
     private ProductSkuService productSkuService;
     @Autowired
     private P2PProductService p2PProductService;
+    @Autowired
+    private ProductCategoryService productCategoryService;
 
     @ApiOperation(value = "P2P查询数据")
     @RequestMapping(value = "/list", method = RequestMethod.POST)
@@ -63,13 +65,25 @@ public class ProductController extends BaseCtrl<ProductDO, ProductQuery> {
     @ApiOperation(value = "通过ID获取数据")
     @RequestMapping(value = "/select/{id}", method = RequestMethod.GET)
     public R<ProductDO> select(@PathVariable Long id) {
-        ProductDO entity = service.getById(id);
-        Asserts.notNull(ResultCode.RESPONSE_DATA_NULL, entity);
+        ProductDO product = service.getById(id);
+        Asserts.notNull(ResultCode.RESPONSE_DATA_NULL, product);
         ProductSkuQuery query = new ProductSkuQuery();
-        query.setProductId(entity.getId());
+        query.setProductId(product.getId());
         List<ProductSkuDO> skuList = productSkuService.list(QueryUtil.buildWrapper(query));
-        entity.setSkuList(skuList);
-        return Response.restResult(entity, ResultCode.SUCCESS);
+        product.setSkuList(skuList);
+        BrandDO brand = brandService.getById(product.getBrandId());
+        product.setBrand(brand);
+        SupplierDO supplier = supplierService.getById(product.getSupplierId());
+        product.setSupplier(supplier);
+        ProductCategoryDO category2 = productCategoryService.getById(product.getCategoryId());
+        ProductCategoryDO category1 = productCategoryService.getById(category2.getParentId());
+        if (category1 != null) {
+            category1.getChildren().add(category2);
+            product.setCategory(category1);
+        } else {
+            product.setCategory(category2);
+        }
+        return Response.restResult(product, ResultCode.SUCCESS);
     }
 
     @ApiOperation(value = "通过ID更新数据")
