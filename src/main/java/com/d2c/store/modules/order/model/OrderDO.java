@@ -97,7 +97,7 @@ public class OrderDO extends BaseDelDO implements IAddress {
 
     public enum TypeEnum {
         //
-        NORMAL("普通", 120);
+        NORMAL("普通", 1440);
         //
         private String description;
         private Integer expireMinutes;
