@@ -17,6 +17,7 @@ import com.d2c.store.modules.order.model.OrderItemDO;
 import com.d2c.store.modules.order.query.OrderItemQuery;
 import com.d2c.store.modules.order.query.OrderQuery;
 import com.d2c.store.modules.order.service.OrderItemService;
+import com.d2c.store.modules.order.service.OrderService;
 import com.d2c.store.modules.security.model.UserDO;
 import com.d2c.store.modules.security.service.UserService;
 import io.swagger.annotations.Api;
@@ -47,6 +48,8 @@ public class OrderController extends BaseCtrl<OrderDO, OrderQuery> {
     private P2PService p2PService;
     @Autowired
     private FadadaClient fadadaClient;
+    @Autowired
+    private OrderService OrderService;
 
     @ApiOperation(value = "P2P查询数据")
     @RequestMapping(value = "/list", method = RequestMethod.POST)
@@ -96,10 +99,7 @@ public class OrderController extends BaseCtrl<OrderDO, OrderQuery> {
         //合同归档
         fadadaClient.contractFilling("C_" + orderDO.getSn());
         //修改订单状态为待发货
-        OrderDO order = new OrderDO();
-        order.setId(orderDO.getId());
-        order.setStatus(OrderDO.StatusEnum.WAIT_DELIVER.name());
-        service.updateById(order);
+        OrderService.doFilling(orderDO.getSn());
         return Response.restResult(null, ResultCode.SUCCESS);
     }
 

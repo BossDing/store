@@ -342,12 +342,12 @@ public class C_OrderController extends BaseController {
         Asserts.notNull("会员姓名，身份证和手机号不能为空", memberDO.getNickname(), memberDO.getIdentity(), memberDO.getAccount());
         if (memberDO.getCustomerId() == null) {
             // 注册
-            String customerId = fadadaClient.registerAccount("m_" + memberDO.getId(), "1");
+            String customerId = fadadaClient.registerAccount(PrefixConstant.FDD_PERSON_APPLY_PREFIX + memberDO.getId(), "1");
             memberDO.setCustomerId(customerId);
         }
         if (memberDO.getEvidenceNo() == null) {
             // 存证
-            String evidenceNo = fadadaClient.personDeposit(memberDO, "DA" + memberDO.getId());
+            String evidenceNo = fadadaClient.personDeposit(memberDO, PrefixConstant.FDD_PERSON_APPLY_PREFIX + memberDO.getId());
             fadadaClient.applyClinetNumcert(memberDO.getCustomerId(), evidenceNo);
             memberService.updateById(memberDO);
         }
