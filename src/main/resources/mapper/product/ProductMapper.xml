@@ -20,8 +20,26 @@
     <select id="findByQuery" resultMap="baseMap">
         SELECT p.* FROM P_PRODUCT p, P_P2P_PRODUCT r
         WHERE p.id=r.product_id AND r.p2p_id=#{p2pId}
+        <if test="query.status != null">
+            AND p.status = #{query.status}
+        </if>
         <if test="query.categoryId != null">
             AND p.category_id = #{query.categoryId}
+        </if>
+        <if test="query.categoryIds != null">
+            AND p.category_id IN
+            <foreach collection="query.categoryIds" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="query.name != null">
+            AND p.name LIKE CONCAT('%',#{query.name},'%')
+        </if>
+        <if test="query.priceL != null">
+            AND p.price &gt;= #{query.priceL}
+        </if>
+        <if test="query.priceR != null">
+            AND p.price &lt;= #{query.priceR}
         </if>
         <if test="sort != null">
             ORDER BY ${sort}
@@ -32,8 +50,26 @@
     <select id="countByQuery" resultType="int">
         SELECT COUNT(p.id) FROM P_PRODUCT p, P_P2P_PRODUCT r
         WHERE p.id=r.product_id AND r.p2p_id=#{p2pId}
+        <if test="query.status != null">
+            AND p.status = #{query.status}
+        </if>
         <if test="query.categoryId != null">
             AND p.category_id = #{query.categoryId}
+        </if>
+        <if test="query.categoryIds != null">
+            AND p.category_id IN
+            <foreach collection="query.categoryIds" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="query.name != null">
+            AND p.name LIKE CONCAT('%',#{query.name},'%')
+        </if>
+        <if test="query.priceL != null">
+            AND p.price &gt;= #{query.priceL}
+        </if>
+        <if test="query.priceR != null">
+            AND p.price &lt;= #{query.priceR}
         </if>
     </select>
 
