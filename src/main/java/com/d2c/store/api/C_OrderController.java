@@ -340,16 +340,35 @@ public class C_OrderController extends BaseController {
     public R signContract(String orderSn, String returnUrl) {
         MemberDO memberDO = loginMemberHolder.getLoginMember();
         Asserts.notNull("会员姓名，身份证和手机号不能为空", memberDO.getNickname(), memberDO.getIdentity(), memberDO.getAccount());
+        boolean needUpdateMember = false;
         if (memberDO.getCustomerId() == null) {
             // 注册
-            String customerId = fadadaClient.registerAccount("m_" + memberDO.getId(), "1");
+            String customerId = fadadaClient.registerAccount(PrefixConstant.FDD_PERSON_APPLY_PREFIX + memberDO.getId(), "1");
             memberDO.setCustomerId(customerId);
+            needUpdateMember = true;
         }
         if (memberDO.getEvidenceNo() == null) {
             // 存证
-            String evidenceNo = fadadaClient.personDeposit(memberDO, "DA" + memberDO.getId());
+            String evidenceNo = fadadaClient.personDeposit(memberDO, PrefixConstant.FDD_PERSON_APPLY_PREFIX + memberDO.getId());
+            memberDO.setEvidenceNo(evidenceNo);
             fadadaClient.applyClinetNumcert(memberDO.getCustomerId(), evidenceNo);
-            memberService.updateById(memberDO);
+            needUpdateMember = true;
+        }
+        if (memberDO.getSignId() == null) {
+            //用户签章
+            String singImg = fadadaClient.customSignature(memberDO.getCustomerId(), memberDO.getNickname());
+            String signId = fadadaClient.addSignature(memberDO.getCustomerId(), singImg);
+            memberDO.setSignId(signId);
+            needUpdateMember = true;
+        }
+        //需要更新用户信息
+        if (needUpdateMember) {
+            MemberDO member = new MemberDO();
+            member.setId(memberDO.getId());
+            member.setCustomerId(memberDO.getCustomerId());
+            member.setEvidenceNo(memberDO.getEvidenceNo());
+            member.setSignId(memberDO.getSignId());
+            memberService.updateById(member);
         }
         // 合同填充
         OrderQuery oq = new OrderQuery();

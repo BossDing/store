@@ -131,13 +131,20 @@ public class OrderServiceImpl extends BaseService<OrderMapper, OrderDO> implemen
 
     @Override
     @Transactional
-    public boolean doSign(String orderSn) {
-        // 订单签约
+    public boolean doFilling(String orderSn) {
+        boolean success = true;
+        // 合同归档，订单转为待发货
         OrderQuery oq = new OrderQuery();
         oq.setSn(orderSn);
         OrderDO orderDO = new OrderDO();
-        orderDO.setStatus(OrderDO.StatusEnum.WAIT_P2P_SIGN.name());
-        return this.update(orderDO, QueryUtil.buildWrapper(oq));
+        orderDO.setStatus(OrderDO.StatusEnum.WAIT_DELIVER.name());
+        success &= this.update(orderDO, QueryUtil.buildWrapper(oq));
+        OrderItemDO oi = new OrderItemDO();
+        oi.setStatus(OrderItemDO.StatusEnum.WAIT_DELIVER.name());
+        OrderItemQuery oiq = new OrderItemQuery();
+        oiq.setOrderSn(new String[]{orderSn});
+        success &= orderItemService.update(oi, QueryUtil.buildWrapper(oiq));
+        return success;
     }
 
 }
