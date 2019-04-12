@@ -48,6 +48,7 @@ public class MemberServiceImpl extends BaseService<MemberMapper, MemberDO> imple
         MemberQuery mq = new MemberQuery();
         mq.setAccount(account);
         MemberDO member = this.getOne(QueryUtil.buildWrapper(mq));
+        if (member == null) return null;
         AccountQuery aq = new AccountQuery();
         aq.setMemberId(member.getId());
         aq.setP2pId(p2pId);
