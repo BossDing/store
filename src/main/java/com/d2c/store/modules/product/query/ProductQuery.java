@@ -25,6 +25,9 @@ public class ProductQuery extends BaseQuery {
     @Condition(condition = ConditionEnum.IN, field = "category_id")
     @ApiModelProperty(value = "品类ID")
     private Long[] categoryIds;
+    @Condition(condition = ConditionEnum.EQ)
+    @ApiModelProperty(value = "款号")
+    private String sn;
     @Condition(condition = ConditionEnum.LIKE)
     @ApiModelProperty(value = "名称")
     private String name;
@@ -34,5 +37,17 @@ public class ProductQuery extends BaseQuery {
     @Condition(condition = ConditionEnum.LE, field = "price")
     @ApiModelProperty(value = "最高价格")
     private BigDecimal priceR;
+    @Condition(condition = ConditionEnum.GE, field = "market_price")
+    @ApiModelProperty(value = "最低市场价")
+    private BigDecimal marketPriceL;
+    @Condition(condition = ConditionEnum.LE, field = "market_price")
+    @ApiModelProperty(value = "最高市场价")
+    private BigDecimal marketPriceR;
+    @Condition(condition = ConditionEnum.EQ)
+    @ApiModelProperty(value = "品牌ID")
+    private Long brandId;
+    @Condition(condition = ConditionEnum.EQ)
+    @ApiModelProperty(value = "供应商ID")
+    private Long supplierId;
 
 }

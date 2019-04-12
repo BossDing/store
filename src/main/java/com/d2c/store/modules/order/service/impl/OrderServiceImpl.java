@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -101,6 +102,13 @@ public class OrderServiceImpl extends BaseService<OrderMapper, OrderDO> implemen
         OrderItemQuery oiq = new OrderItemQuery();
         oiq.setOrderSn(new String[]{order.getSn()});
         success &= orderItemService.update(oi, QueryUtil.buildWrapper(oiq));
+        // 账户重置
+        AccountQuery query = new AccountQuery();
+        query.setMemberId(order.getMemberId());
+        query.setP2pId(order.getP2pId());
+        AccountDO account = new AccountDO();
+        account.setDeadline(new Date());
+        accountService.update(account, QueryUtil.buildWrapper(query));
         List<OrderItemDO> orderItemList = order.getOrderItemList();
         for (OrderItemDO orderItem : orderItemList) {
             // 返还库存
@@ -131,19 +139,26 @@ public class OrderServiceImpl extends BaseService<OrderMapper, OrderDO> implemen
 
     @Override
     @Transactional
-    public boolean doFilling(String orderSn) {
+    public boolean doFilling(OrderDO order) {
         boolean success = true;
         // 合同归档，订单转为待发货
         OrderQuery oq = new OrderQuery();
-        oq.setSn(orderSn);
+        oq.setSn(order.getSn());
         OrderDO orderDO = new OrderDO();
         orderDO.setStatus(OrderDO.StatusEnum.WAIT_DELIVER.name());
         success &= this.update(orderDO, QueryUtil.buildWrapper(oq));
         OrderItemDO oi = new OrderItemDO();
         oi.setStatus(OrderItemDO.StatusEnum.WAIT_DELIVER.name());
         OrderItemQuery oiq = new OrderItemQuery();
-        oiq.setOrderSn(new String[]{orderSn});
+        oiq.setOrderSn(new String[]{order.getSn()});
         success &= orderItemService.update(oi, QueryUtil.buildWrapper(oiq));
+        // 账户重置
+        AccountQuery query = new AccountQuery();
+        query.setMemberId(order.getMemberId());
+        query.setP2pId(order.getP2pId());
+        AccountDO account = new AccountDO();
+        account.setDeadline(new Date());
+        accountService.update(account, QueryUtil.buildWrapper(query));
         return success;
     }
 

@@ -14,6 +14,6 @@ public interface OrderService extends IService<OrderDO> {
 
     boolean doDelete(String orderSn);
 
-    boolean doFilling(String orderSn);
+    boolean doFilling(OrderDO order);
 
 }

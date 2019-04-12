@@ -75,15 +75,15 @@ public class OrderController extends BaseCtrl<OrderDO, OrderQuery> {
         return Response.restResult(pager, ResultCode.SUCCESS);
     }
 
-    @ApiOperation(value = "p2p签约")
+    @ApiOperation(value = "P2P签约")
     @RequestMapping(value = "/sign", method = RequestMethod.POST)
     public R p2pSign(Long id) {
         OrderDO orderDO = service.getById(id);
         Asserts.eq(orderDO.getStatus(), OrderDO.StatusEnum.WAIT_P2P_SIGN.name(), "订单状态不符");
-        //p2p自动签章
+        // P2P自动签章
         P2PDO p2PDO = p2PService.getById(orderDO.getP2pId());
         fadadaClient.extSignAuto(p2PDO.getCustomerId(), PrefixConstant.FDD_ORDER_C_TRANSATION_PREFIX + id, orderDO.getContractId(), p2PDO.getName() + "债权合同");
-        //修改订单状态为客服待审核
+        // 修改订单状态为客服待审核
         OrderDO order = new OrderDO();
         order.setId(id);
         order.setStatus(OrderDO.StatusEnum.WAIT_CUS_SIGN.name());
@@ -96,10 +96,10 @@ public class OrderController extends BaseCtrl<OrderDO, OrderQuery> {
     public R filling(Long id) {
         OrderDO orderDO = service.getById(id);
         Asserts.eq(orderDO.getStatus(), OrderDO.StatusEnum.WAIT_CUS_SIGN.name(), "订单状态不符");
-        //合同归档
+        // 合同归档
         fadadaClient.contractFilling("C_" + orderDO.getSn());
-        //修改订单状态为待发货
-        OrderService.doFilling(orderDO.getSn());
+        // 修改订单状态为待发货
+        OrderService.doFilling(orderDO);
         return Response.restResult(null, ResultCode.SUCCESS);
     }
 
