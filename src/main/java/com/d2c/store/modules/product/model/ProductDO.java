@@ -68,6 +68,9 @@ public class ProductDO extends BaseDelDO {
     @ApiModelProperty(value = "品牌")
     private BrandDO brand;
     @TableField(exist = false)
+    @ApiModelProperty(value = "供应商")
+    private SupplierDO supplier;
+    @TableField(exist = false)
     @ApiModelProperty(value = "品类树")
     private ProductCategoryDO category;
     @TableField(exist = false)

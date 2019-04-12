@@ -25,7 +25,7 @@ public class ProductQuery extends BaseQuery {
     @Condition(condition = ConditionEnum.IN, field = "category_id")
     @ApiModelProperty(value = "品类ID")
     private Long[] categoryIds;
-    @Condition(condition = ConditionEnum.EQ)
+    @Condition(condition = ConditionEnum.LIKE)
     @ApiModelProperty(value = "名称")
     private String name;
     @Condition(condition = ConditionEnum.GE, field = "price")
