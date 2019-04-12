@@ -343,7 +343,7 @@ public class C_OrderController extends BaseController {
         boolean needUpdateMember = false;
         if (memberDO.getCustomerId() == null) {
             // 注册
-            String customerId = fadadaClient.registerAccount(PrefixConstant.FDD_PERSON_APPLY_PREFIX + memberDO.getId(), "1");
+            String customerId = fadadaClient.registerAccount(PrefixConstant.FDD_PERSON_ACCOUNT_PREFIX + memberDO.getId(), "1");
             memberDO.setCustomerId(customerId);
             needUpdateMember = true;
         }
