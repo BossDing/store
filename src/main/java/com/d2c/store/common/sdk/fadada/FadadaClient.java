@@ -308,7 +308,8 @@ public class FadadaClient {
         req.setTransaction_id(transaction_id);//交易号
         req.setContract_id(contract_id);//合同编号
         req.setClient_role("1");//客户角色
-        req.setSign_keyword("章1");//定位关键字
+        req.setSign_keyword("章2");//定位关键字
+        req.setKeyword_strategy("2");
         req.setDoc_title(doc_title);//文档标题
         req.setNotify_url("");//签署结果回调地址
         String result = base.invokeExtSignAuto(req);
@@ -336,6 +337,8 @@ public class FadadaClient {
         req.setTransaction_id(transaction_id);//交易号
         req.setContract_id(contract_id);//合同编号
         req.setDoc_title(doc_title);//文档标题
+        req.setSign_keyword("章1");
+        req.setKeyword_strategy("2");
         req.setReturn_url(returnUrl);//页面跳转URL（签署结果同步通知）
         req.setNotify_url(NOTIFY_URL);//签约结果异步通知
         //短信校验该参数必填
