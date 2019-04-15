@@ -66,6 +66,7 @@ public class UserController extends BaseExcelCtrl<UserDO, UserQuery> {
         entity.setId(user.getId());
         entity.setStatus(user.getStatus());
         entity.setP2pId(user.getP2pId());
+        entity.setSupplierId(user.getSupplierId());
         redisTemplate.delete("USER::session:" + old.getUsername());
         return super.update(entity);
     }
