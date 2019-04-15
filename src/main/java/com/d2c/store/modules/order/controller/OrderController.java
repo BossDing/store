@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -87,6 +88,7 @@ public class OrderController extends BaseCtrl<OrderDO, OrderQuery> {
         OrderDO order = new OrderDO();
         order.setId(id);
         order.setStatus(OrderDO.StatusEnum.WAIT_CUS_SIGN.name());
+        order.setP2pSignDate(new Date());
         service.updateById(order);
         return Response.restResult(null, ResultCode.SUCCESS);
     }

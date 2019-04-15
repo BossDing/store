@@ -22,6 +22,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Date;
+
 /**
  * @author BaiCai
  */
@@ -57,6 +59,7 @@ public class OrderItemController extends BaseCtrl<OrderItemDO, OrderItemQuery> {
         entity.setLogisticsCom(logisticsCom);
         entity.setLogisticsNum(logisticsNum);
         entity.setStatus(OrderItemDO.StatusEnum.DELIVERED.name());
+        entity.setDeliveredDate(new Date());
         orderItemService.updateById(entity);
         OrderDO entity2 = new OrderDO();
         entity2.setId(orderItem.getOrderId());

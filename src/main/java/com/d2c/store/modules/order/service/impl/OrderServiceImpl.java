@@ -95,6 +95,7 @@ public class OrderServiceImpl extends BaseService<OrderMapper, OrderDO> implemen
         OrderDO o = new OrderDO();
         o.setId(order.getId());
         o.setStatus(OrderDO.StatusEnum.CLOSED.name());
+        o.setCloseDate(new Date());
         success &= this.updateById(o);
         // 关闭订单明细
         OrderItemDO oi = new OrderItemDO();
@@ -146,6 +147,7 @@ public class OrderServiceImpl extends BaseService<OrderMapper, OrderDO> implemen
         oq.setSn(order.getSn());
         OrderDO orderDO = new OrderDO();
         orderDO.setStatus(OrderDO.StatusEnum.WAIT_DELIVER.name());
+        orderDO.setCusSignDate(new Date());
         success &= this.update(orderDO, QueryUtil.buildWrapper(oq));
         OrderItemDO oi = new OrderItemDO();
         oi.setStatus(OrderItemDO.StatusEnum.WAIT_DELIVER.name());

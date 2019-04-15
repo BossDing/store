@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Date;
+
 /**
  * @author Cai
  */
@@ -38,6 +40,7 @@ public class C_CallbackController extends BaseController {
             OrderDO order = new OrderDO();
             order.setId(orderDO.getId());
             order.setStatus(OrderDO.StatusEnum.WAIT_P2P_SIGN.name());
+            order.setMemSignDate(new Date());
             orderService.updateById(order);
         }
         return Response.restResult(null, ResultCode.SUCCESS);

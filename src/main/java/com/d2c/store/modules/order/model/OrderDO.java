@@ -15,6 +15,7 @@ import lombok.EqualsAndHashCode;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -71,6 +72,14 @@ public class OrderDO extends BaseDelDO implements IAddress {
     private BigDecimal payAmount;
     @ApiModelProperty(value = "合同编号")
     private String contractId;
+    @ApiModelProperty(value = "用户签约时间")
+    private Date memSignDate;
+    @ApiModelProperty(value = "P2P签约时间")
+    private Date p2pSignDate;
+    @ApiModelProperty(value = "电商签约时间")
+    private Date cusSignDate;
+    @ApiModelProperty(value = "订单关闭时间")
+    private Date closeDate;
     @TableField(exist = false)
     @ApiModelProperty(value = "类型名")
     private String typeName;

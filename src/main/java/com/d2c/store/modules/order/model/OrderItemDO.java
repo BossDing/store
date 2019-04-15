@@ -15,6 +15,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  * @author BaiCai
@@ -99,6 +100,8 @@ public class OrderItemDO extends BaseDelDO implements ITradeItem {
     private String logisticsCom;
     @ApiModelProperty(value = "物流单号")
     private String logisticsNum;
+    @ApiModelProperty(value = "发货时间")
+    private Date deliveredDate;
     @TableField(exist = false)
     @ApiModelProperty(value = "类型名")
     private String typeName;
