@@ -105,4 +105,14 @@ public class OrderController extends BaseCtrl<OrderDO, OrderQuery> {
         return Response.restResult(null, ResultCode.SUCCESS);
     }
 
+    @ApiOperation(value = "合同查看")
+    @RequestMapping(value = "/view/contract", method = RequestMethod.POST)
+    public R viewContract(String orderSn) {
+        OrderQuery oq = new OrderQuery();
+        oq.setSn(orderSn);
+        OrderDO orderDO = service.getOne(QueryUtil.buildWrapper(oq));
+        String viewUrl = fadadaClient.viewContract(orderDO.getContractId());
+        return Response.restResult(viewUrl, ResultCode.SUCCESS);
+    }
+
 }
