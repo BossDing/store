@@ -231,7 +231,7 @@ public class FadadaClient {
         FddClientBase base = new FddClientBase(APP_ID, APP_SECRET, V, HOST);
         String font_size = "10";//字体大小
         String font_type = "0";//字体类型
-        String paramter = getparamter(orderDO, accountDO, memberDO, p2PDO);//填充内容
+        String paramter = getparamter(contract_id, orderDO, accountDO, memberDO, p2PDO);//填充内容
         String dynamic_tables = getdynamic_tables(list);//动态表格
         String result = base.invokeGenerateContract(TEMPLATE_ID, contract_id, doc_title,
                 font_size, font_type, paramter, dynamic_tables);
@@ -269,9 +269,9 @@ public class FadadaClient {
         return dynamic_tables.toString();
     }
 
-    private String getparamter(OrderDO orderDO, AccountDO accountDO, MemberDO memberDO, P2PDO p2PDO) {
+    private String getparamter(String contract_id, OrderDO orderDO, AccountDO accountDO, MemberDO memberDO, P2PDO p2PDO) {
         JSONObject paramter = new JSONObject();
-        paramter.put("order_id", orderDO.getContractId());
+        paramter.put("order_id", contract_id);
         paramter.put("sign_time", DateUtil.format(new Date(), "yyyy-MM-dd HH:mm:ss"));
         paramter.put("down_time", DateUtil.format(accountDO.getDeadline(), "yyyy-MM-dd HH:mm:ss"));//合同结束日期
         //甲方
